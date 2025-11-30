@@ -78,7 +78,6 @@ export default function RootLayout({
             }
           `}
         </Script>
-        
       </head>
 
       <body className="bg-gray-50">
@@ -91,6 +90,7 @@ export default function RootLayout({
         {/* Footer Component */}
         <Footer />
       </body>
+      
     </html>
   );
 }

@@ -1,11 +1,38 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import Image from "next/image";
+import {
+  Search,
+  TestTube,
+  Package,
+  Ship,
+  FileText,
+  Headphones,
+  Settings,
+  Network,
+  Star,
+  Shield,
+  Clock,
+  DollarSign,
+  Globe,
+  Trophy,
+  ArrowRight,
+  Phone,
+  CheckCircle2,
+} from "lucide-react";
+
+// Register GSAP plugins
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 // Types
 interface Service {
-  icon: string;
+  icon: any;
   title: string;
   description: string;
   features: string[];
@@ -22,7 +49,7 @@ interface ProcessStep {
 }
 
 interface Advantage {
-  icon: string;
+  icon: any;
   title: string;
   description: string;
   bgColor: string;
@@ -31,8 +58,46 @@ interface Advantage {
 
 // Hero Section Component
 const HeroSection = () => {
+  const heroRef = useRef<HTMLDivElement | null>(null);
+  const titleRef = useRef<HTMLHeadingElement | null>(null);
+  const subtitleRef = useRef<HTMLParagraphElement | null>(null);
+  const badgeRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(badgeRef.current, {
+        opacity: 0,
+        y: -20,
+        duration: 0.6,
+        ease: "power3.out",
+      });
+
+      gsap.from(titleRef.current?.children || [], {
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "power3.out",
+        delay: 0.3,
+      });
+
+      gsap.from(subtitleRef.current, {
+        opacity: 0,
+        y: 20,
+        duration: 0.8,
+        ease: "power3.out",
+        delay: 0.8,
+      });
+    }, heroRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="pt-32 pb-20 bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden">
+    <section
+      ref={heroRef}
+      className="pt-32 pb-20 bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden"
+    >
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl animate-pulse"></div>
         <div
@@ -42,19 +107,28 @@ const HeroSection = () => {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6 text-center z-20">
-        <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+        <div
+          ref={badgeRef}
+          className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6"
+        >
           <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
           <span className="text-sm font-medium text-white">What We Offer</span>
         </div>
 
-        <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-          <span className="text-white">Comprehensive</span>
+        <h1
+          ref={titleRef}
+          className="text-5xl lg:text-6xl font-bold mb-6 leading-tight"
+        >
+          <span className="text-white block">Comprehensive</span>
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 block">
             Export Services
           </span>
         </h1>
 
-        <p className="text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto">
+        <p
+          ref={subtitleRef}
+          className="text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto"
+        >
           End-to-end agro export solutions tailored to meet global market
           demands. From sourcing to delivery, we handle every aspect of your
           export requirements.
@@ -65,24 +139,56 @@ const HeroSection = () => {
 };
 
 // Service Card Component
-const ServiceCard = ({ service }: { service: Service }) => {
+const ServiceCard = ({
+  service,
+  index,
+}: {
+  service: Service;
+  index: number;
+}) => {
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const Icon = service.icon;
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(cardRef.current, {
+        scrollTrigger: {
+          trigger: cardRef.current,
+          start: "top 90%",
+          toggleActions: "play none none none",
+        },
+        opacity: 0,
+        y: 50,
+        duration: 0.6,
+        delay: index * 0.1,
+        ease: "power3.out",
+      });
+    }, cardRef);
+
+    return () => ctx.revert();
+  }, [index]);
+
   return (
     <div
+      ref={cardRef}
       className={`bg-gradient-to-br ${service.bgGradient} rounded-2xl p-8 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border ${service.border} shadow-lg`}
     >
       <div
         className={`w-16 h-16 bg-gradient-to-br ${service.gradient} rounded-2xl flex items-center justify-center mb-6 shadow-lg`}
       >
-        <i className={`fas ${service.icon} text-white text-2xl`}></i>
+        <Icon className="text-white" size={28} />
       </div>
+
       <h3 className="text-2xl font-bold text-gray-900 mb-4">{service.title}</h3>
+
       <p className="text-gray-600 leading-relaxed mb-6">
         {service.description}
       </p>
+
       <ul className="space-y-3 text-gray-600">
-        {service.features.map((feature, index) => (
-          <li key={index} className="flex items-center space-x-3">
-            <i className="fas fa-check-circle text-green-500 text-sm"></i>
+        {service.features.map((feature, idx) => (
+          <li key={idx} className="flex items-center space-x-3">
+            <CheckCircle2 className="text-green-500" size={16} />
             <span>{feature}</span>
           </li>
         ))}
@@ -93,12 +199,33 @@ const ServiceCard = ({ service }: { service: Service }) => {
 
 // Main Services Section Component
 const MainServicesSection = () => {
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const headerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(headerRef.current?.children || [], {
+        scrollTrigger: {
+          trigger: headerRef.current,
+          start: "top 90%",
+        },
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "power3.out",
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   const services: Service[] = [
     {
-      icon: "fa-search",
+      icon: Search,
       title: "Quality Sourcing",
       description:
-        "We source premium quality agro products directly from trusted farmers and certified suppliers, ensuring consistent quality and reliable supply.",
+        "We source premium agro products directly from trusted farmers and certified suppliers.",
       features: [
         "Direct farmer partnerships",
         "Rigorous quality checks",
@@ -109,10 +236,10 @@ const MainServicesSection = () => {
       border: "border-blue-100",
     },
     {
-      icon: "fa-vial",
+      icon: TestTube,
       title: "Quality Control",
       description:
-        "Comprehensive quality testing and certification to meet international standards and specific client requirements.",
+        "Full quality testing and certification to meet international standards.",
       features: [
         "Laboratory testing",
         "International certifications",
@@ -123,10 +250,10 @@ const MainServicesSection = () => {
       border: "border-green-100",
     },
     {
-      icon: "fa-box",
+      icon: Package,
       title: "Processing & Packaging",
       description:
-        "State-of-the-art processing facilities and customized packaging solutions to preserve product quality and meet market specifications.",
+        "Modern processing units and customized packaging to preserve quality.",
       features: [
         "Custom packaging",
         "Modern processing units",
@@ -137,10 +264,10 @@ const MainServicesSection = () => {
       border: "border-purple-100",
     },
     {
-      icon: "fa-ship",
+      icon: Ship,
       title: "International Logistics",
       description:
-        "Efficient shipping and logistics management by sea and air, ensuring timely delivery to destinations worldwide.",
+        "Efficient sea and air shipping ensuring timely global delivery.",
       features: [
         "Sea & air freight",
         "Temperature control",
@@ -151,10 +278,9 @@ const MainServicesSection = () => {
       border: "border-yellow-100",
     },
     {
-      icon: "fa-file-contract",
+      icon: FileText,
       title: "Documentation & Compliance",
-      description:
-        "Complete documentation handling and regulatory compliance for smooth customs clearance and international trade.",
+      description: "Complete documentation handling and regulatory compliance.",
       features: [
         "Export documentation",
         "Customs clearance",
@@ -165,13 +291,13 @@ const MainServicesSection = () => {
       border: "border-red-100",
     },
     {
-      icon: "fa-headset",
+      icon: Headphones,
       title: "Customer Support",
       description:
-        "Dedicated account management and 24/7 support to ensure seamless communication and address any concerns promptly.",
+        "24/7 multilingual support and dedicated account management.",
       features: [
         "Dedicated account managers",
-        "24/7 multilingual support",
+        "24/7 support",
         "Regular updates",
       ],
       gradient: "from-indigo-500 to-indigo-600",
@@ -181,25 +307,27 @@ const MainServicesSection = () => {
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section ref={sectionRef} className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
+        <div ref={headerRef} className="text-center mb-16">
           <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-600 rounded-full px-4 py-2 mb-4">
-            <i className="fas fa-cogs"></i>
+            <Settings size={16} />
             <span className="font-semibold">Our Services</span>
           </div>
+
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
             End-to-End Export Solutions
           </h2>
+
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            We provide comprehensive agro export services that ensure quality,
-            reliability, and timely delivery to international markets.
+            We provide complete agro export services ensuring premium quality,
+            reliability, and timely delivery across global markets.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service, index) => (
-            <ServiceCard key={index} service={service} />
+            <ServiceCard key={index} service={service} index={index} />
           ))}
         </div>
       </div>
@@ -207,57 +335,92 @@ const MainServicesSection = () => {
   );
 };
 
-// Process Section Component
+// Process Section
 const ProcessSection = () => {
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const stepsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      stepsRef.current.forEach((step, index) => {
+        if (step) {
+          gsap.from(step, {
+            scrollTrigger: {
+              trigger: step,
+              start: "top 85%",
+            },
+            opacity: 0,
+            scale: 0.8,
+            duration: 0.6,
+            delay: index * 0.15,
+            ease: "back.out(1.7)",
+          });
+        }
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   const steps: ProcessStep[] = [
     {
       number: 1,
       title: "Enquiry & Requirement Analysis",
       description:
-        "We understand your specific needs, quality requirements, and delivery expectations.",
+        "We understand your product requirements and quality expectations.",
       color: "bg-blue-600",
     },
     {
       number: 2,
       title: "Sourcing & Quality Check",
       description:
-        "We source the best products and conduct rigorous quality testing to meet standards.",
+        "Sourcing best products and conducting multiple quality tests.",
       color: "bg-green-600",
     },
     {
       number: 3,
       title: "Processing & Packaging",
       description:
-        "Products are processed, packaged, and labeled according to your specifications.",
+        "Processing, packaging, and labeling according to your needs.",
       color: "bg-yellow-600",
     },
     {
       number: 4,
       title: "Shipping & Delivery",
-      description:
-        "We handle all logistics and ensure timely delivery to your specified destination.",
+      description: "We handle logistics and ensure timely worldwide delivery.",
       color: "bg-purple-600",
     },
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+    <section
+      ref={sectionRef}
+      className="py-20 bg-gradient-to-br from-gray-50 to-blue-50"
+    >
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <div className="inline-flex items-center space-x-2 bg-green-100 text-green-600 rounded-full px-4 py-2 mb-4">
-            <i className="fas fa-sitemap"></i>
+            <Network size={16} />
             <span className="font-semibold">Our Process</span>
           </div>
+
           <h2 className="text-4xl font-bold text-gray-900 mb-4">How We Work</h2>
+
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            A streamlined export process designed for efficiency, transparency,
-            and customer satisfaction
+            A simple, transparent, and highly efficient export workflow designed
+            to deliver the best results.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step, index) => (
-            <div key={index} className="text-center">
+            <div
+              key={index}
+              ref={(el) => {
+                stepsRef.current[index] = el;
+              }}
+              className="text-center"
+            >
               <div className="relative mb-6">
                 <div
                   className={`w-20 h-20 ${step.color} rounded-2xl flex items-center justify-center mx-auto shadow-lg`}
@@ -266,13 +429,16 @@ const ProcessSection = () => {
                     {step.number}
                   </span>
                 </div>
+
                 {index < steps.length - 1 && (
                   <div className="absolute -right-4 top-1/2 transform -translate-y-1/2 w-8 h-0.5 bg-blue-200 hidden lg:block"></div>
                 )}
               </div>
+
               <h3 className="text-xl font-bold text-gray-900 mb-3">
                 {step.title}
               </h3>
+
               <p className="text-gray-600 text-sm">{step.description}</p>
             </div>
           ))}
@@ -282,51 +448,87 @@ const ProcessSection = () => {
   );
 };
 
-// Why Choose Us Section Component
+// Why Choose Us Section
 const WhyChooseUsSection = () => {
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const imageRef = useRef<HTMLDivElement | null>(null);
+  const advantagesRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(imageRef.current, {
+        scrollTrigger: {
+          trigger: imageRef.current,
+          start: "top 80%",
+        },
+        opacity: 0,
+        x: 100,
+        duration: 1,
+        ease: "power3.out",
+      });
+
+      advantagesRef.current.forEach((advantage, index) => {
+        if (advantage) {
+          gsap.from(advantage, {
+            scrollTrigger: {
+              trigger: advantage,
+              start: "top 85%",
+            },
+            opacity: 0,
+            x: -50,
+            duration: 0.8,
+            delay: index * 0.15,
+            ease: "power3.out",
+          });
+        }
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   const advantages: Advantage[] = [
     {
-      icon: "fa-shield-alt",
+      icon: Shield,
       title: "Quality Assurance",
       description:
-        "Rigorous quality control at every stage ensures that only the finest products reach our clients.",
+        "Strict quality control to ensure premium-grade products for every shipment.",
       bgColor: "bg-blue-100",
       iconColor: "text-blue-600",
     },
     {
-      icon: "fa-clock",
+      icon: Clock,
       title: "Timely Delivery",
       description:
-        "Efficient logistics and established shipping partnerships guarantee on-time delivery worldwide.",
+        "Efficient logistics with guaranteed on-time international deliveries.",
       bgColor: "bg-green-100",
       iconColor: "text-green-600",
     },
     {
-      icon: "fa-hand-holding-usd",
+      icon: DollarSign,
       title: "Competitive Pricing",
       description:
-        "Direct sourcing and efficient operations enable us to offer competitive prices without compromising quality.",
+        "Cost-effective export solutions without compromising quality.",
       bgColor: "bg-purple-100",
       iconColor: "text-purple-600",
     },
     {
-      icon: "fa-globe",
+      icon: Globe,
       title: "Global Network",
       description:
-        "Extensive experience in exporting to multiple countries with understanding of diverse market requirements.",
+        "Experienced in exporting to multiple countries with varied market requirements.",
       bgColor: "bg-red-100",
       iconColor: "text-red-600",
     },
   ];
 
   return (
-    <section className="py-20 bg-white">
+    <section ref={sectionRef} className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Content */}
           <div>
             <div className="inline-flex items-center space-x-2 bg-orange-100 text-orange-600 rounded-full px-4 py-2 mb-6">
-              <i className="fas fa-star"></i>
+              <Star size={16} />
               <span className="font-semibold">Why Choose Us</span>
             </div>
 
@@ -335,40 +537,49 @@ const WhyChooseUsSection = () => {
             </h2>
 
             <div className="space-y-6">
-              {advantages.map((advantage, index) => (
-                <div key={index} className="flex items-start space-x-4">
+              {advantages.map((advantage, index) => {
+                const Icon = advantage.icon;
+                return (
                   <div
-                    className={`w-12 h-12 ${advantage.bgColor} rounded-xl flex items-center justify-center flex-shrink-0`}
+                    key={index}
+                    ref={(el) => {
+                      advantagesRef.current[index] = el;
+                    }}
+                    className="flex items-start space-x-4"
                   >
-                    <i
-                      className={`fas ${advantage.icon} ${advantage.iconColor} text-xl`}
-                    ></i>
+                    <div
+                      className={`w-12 h-12 ${advantage.bgColor} rounded-xl flex items-center justify-center flex-shrink-0`}
+                    >
+                      <Icon className={advantage.iconColor} size={24} />
+                    </div>
+
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">
+                        {advantage.title}
+                      </h3>
+                      <p className="text-gray-600">{advantage.description}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      {advantage.title}
-                    </h3>
-                    <p className="text-gray-600">{advantage.description}</p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
-          {/* Image */}
-          <div className="relative">
+          <div ref={imageRef} className="relative">
             <Image
-              src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2064&q=80"
+              src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?auto=format&fit=crop&w=2064&q=80"
               alt="Export Services"
               width={800}
               height={600}
               className="rounded-2xl shadow-2xl"
             />
+
             <div className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-6 shadow-2xl">
               <div className="flex items-center space-x-4">
                 <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center">
-                  <i className="fas fa-trophy text-green-600 text-2xl"></i>
+                  <Trophy className="text-green-600" size={28} />
                 </div>
+
                 <div>
                   <div className="font-bold text-gray-900 text-lg">
                     Trusted Partner
@@ -386,21 +597,43 @@ const WhyChooseUsSection = () => {
   );
 };
 
-// CTA Section Component
+// CTA Section
 const CTASection = () => {
+  const ctaRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(ctaRef.current?.children || [], {
+        scrollTrigger: {
+          trigger: ctaRef.current,
+          start: "top 80%",
+        },
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "power3.out",
+      });
+    }, ctaRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section className="py-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800"></div>
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2128&q=80')] bg-cover bg-center opacity-10"></div>
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?auto=format&fit=crop&w=2128&q=80')] bg-cover bg-center opacity-10"></div>
 
-      <div className="relative max-w-4xl mx-auto px-6 text-center">
+      <div ref={ctaRef} className="relative max-w-4xl mx-auto px-6 text-center">
         <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
           Ready to Start Exporting?
         </h2>
+
         <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
-          Let us handle your agro export needs with our comprehensive services
-          and expertise in international trade.
+          Let us handle your agro export needs with our expertise and complete
+          service workflow.
         </p>
+
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/contact"
@@ -408,16 +641,23 @@ const CTASection = () => {
           >
             <span className="flex items-center justify-center space-x-2">
               <span>Get Free Consultation</span>
-              <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform duration-300"></i>
+              <ArrowRight
+                className="group-hover:translate-x-1 transition-transform duration-300"
+                size={20}
+              />
             </span>
           </Link>
+
           <a
             href="tel:+1234567890"
             className="border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all duration-300 backdrop-blur-sm text-lg group"
           >
             <span className="flex items-center justify-center space-x-2">
               <span>Call Our Experts</span>
-              <i className="fas fa-phone group-hover:scale-110 transition-transform duration-300"></i>
+              <Phone
+                className="group-hover:scale-110 transition-transform duration-300"
+                size={20}
+              />
             </span>
           </a>
         </div>
@@ -426,8 +666,18 @@ const CTASection = () => {
   );
 };
 
-// Main Services Page Component
+// Main Page Component
 export default function ServicesPage() {
+  useEffect(() => {
+    // Reset scroll position to top on mount
+    window.scrollTo(0, 0);
+
+    // Cleanup ScrollTrigger instances on unmount
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, []);
+
   return (
     <main className="min-h-screen">
       <HeroSection />

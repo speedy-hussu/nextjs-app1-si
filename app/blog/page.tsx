@@ -1,8 +1,21 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import { useState, useMemo, useEffect, useRef } from "react";
+import {
+  Search,
+  User,
+  Calendar,
+  ArrowRight,
+  Newspaper,
+  Sprout,
+  Tractor,
+  Ship,
+  ArrowLeft,
+} from "lucide-react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Types
 interface BlogPost {
@@ -28,6 +41,14 @@ interface Category {
   name: string;
   count: number;
 }
+
+// Icon mapping
+const iconMap: { [key: string]: any } = {
+  "fa-newspaper": Newspaper,
+  "fa-seedling": Sprout,
+  "fa-tractor": Tractor,
+  "fa-ship": Ship,
+};
 
 // Sample blog posts data
 const BLOG_POSTS: BlogPost[] = [
@@ -93,8 +114,54 @@ const CATEGORIES: Category[] = [
 
 // Hero Section Component
 const HeroSection = () => {
+  const heroRef = useRef(null);
+  const badgeRef = useRef(null);
+  const titleRef = useRef(null);
+  const subtitleRef = useRef(null);
+  const descRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(badgeRef.current, {
+        opacity: 0,
+        y: -30,
+        duration: 0.8,
+        ease: "power3.out",
+      });
+
+      gsap.from(titleRef.current, {
+        opacity: 0,
+        y: 40,
+        duration: 1,
+        delay: 0.3,
+        ease: "power3.out",
+      });
+
+      gsap.from(subtitleRef.current, {
+        opacity: 0,
+        y: 40,
+        duration: 1,
+        delay: 0.5,
+        ease: "power3.out",
+      });
+
+      gsap.from(descRef.current, {
+        opacity: 0,
+        y: 30,
+        duration: 1,
+        delay: 0.7,
+        ease: "power3.out",
+      });
+    }, heroRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="pt-32 pb-20 bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden">
+    <section
+      ref={heroRef}
+      className="pt-32 pb-20 bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden"
+    >
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl animate-pulse"></div>
         <div
@@ -104,7 +171,10 @@ const HeroSection = () => {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6 text-center z-20">
-        <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+        <div
+          ref={badgeRef}
+          className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6"
+        >
           <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
           <span className="text-sm font-medium text-white">
             Insights & Updates
@@ -112,13 +182,21 @@ const HeroSection = () => {
         </div>
 
         <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-          <span className="text-white">Shivaay International</span>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 block leading-relaxed">
+          <span ref={titleRef} className="text-white block">
+            Shivaay International
+          </span>
+          <span
+            ref={subtitleRef}
+            className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 block leading-relaxed"
+          >
             Blog
           </span>
         </h1>
 
-        <p className="text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto">
+        <p
+          ref={descRef}
+          className="text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto"
+        >
           Stay updated with the latest trends, insights, and news in the global
           agro export industry. Expert analysis and valuable information for
           importers and distributors.
@@ -129,26 +207,40 @@ const HeroSection = () => {
 };
 
 // Blog Post Card Component
-const BlogPostCard = ({ post }: { post: BlogPost }) => {
+const BlogPostCard = ({ post, index }: { post: BlogPost; index: number }) => {
+  const cardRef = useRef(null);
+  const Icon = iconMap[post.icon] || Newspaper;
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(cardRef.current, {
+        scrollTrigger: {
+          trigger: cardRef.current,
+          start: "top bottom-=50",
+          toggleActions: "play none none none",
+        },
+        opacity: 0,
+        y: 60,
+        duration: 0.8,
+        delay: index * 0.1,
+        ease: "power3.out",
+      });
+    }, cardRef);
+
+    return () => ctx.revert();
+  }, [index]);
+
   return (
-    <article className="bg-white rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 shadow-lg">
+    <article
+      ref={cardRef}
+      className="bg-white rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 shadow-lg"
+    >
       <div
         className={`h-48 bg-gradient-to-br ${post.gradient} relative overflow-hidden`}
       >
-        {post.image ? (
-          <Image
-            src={post.image}
-            alt={post.title}
-            fill
-            className="object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <i
-              className={`fas ${post.icon} text-white text-6xl opacity-50`}
-            ></i>
-          </div>
-        )}
+        <div className="w-full h-full flex items-center justify-center">
+          <Icon className="text-white w-16 h-16 opacity-50" />
+        </div>
         <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
           <span className="text-white text-sm font-semibold">
             {post.category}
@@ -159,33 +251,33 @@ const BlogPostCard = ({ post }: { post: BlogPost }) => {
       <div className="p-6">
         <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
           <div className="flex items-center space-x-1">
-            <i className="fas fa-user"></i>
+            <User className="w-4 h-4" />
             <span>{post.author}</span>
           </div>
           <div className="flex items-center space-x-1">
-            <i className="fas fa-calendar"></i>
+            <Calendar className="w-4 h-4" />
             <span>{post.date}</span>
           </div>
         </div>
 
         <h2 className="text-xl font-bold text-gray-900 mb-3 leading-tight">
-          <Link
+          <a
             href={`/blog/${post.id}`}
             className="hover:text-blue-600 transition-colors duration-300"
           >
             {post.title}
-          </Link>
+          </a>
         </h2>
 
         <p className="text-gray-600 leading-relaxed mb-4">{post.excerpt}</p>
 
-        <Link
+        <a
           href={`/blog/${post.id}`}
           className="inline-flex items-center space-x-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors duration-300 group"
         >
           <span>Read More</span>
-          <i className="fas fa-arrow-right group-hover:translate-x-1 transition-transform duration-300"></i>
-        </Link>
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+        </a>
       </div>
     </article>
   );
@@ -193,8 +285,31 @@ const BlogPostCard = ({ post }: { post: BlogPost }) => {
 
 // Sidebar Search Widget Component
 const SearchWidget = ({ onSearch }: { onSearch: (term: string) => void }) => {
+  const searchRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(searchRef.current, {
+        scrollTrigger: {
+          trigger: searchRef.current,
+          start: "top bottom-=100",
+          toggleActions: "play none none none",
+        },
+        opacity: 0,
+        x: 50,
+        duration: 0.8,
+        ease: "power3.out",
+      });
+    }, searchRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-lg mb-8">
+    <div
+      ref={searchRef}
+      className="bg-white rounded-2xl p-6 border border-gray-100 shadow-lg mb-8"
+    >
       <h3 className="text-lg font-bold text-gray-900 mb-4">Search Blog</h3>
       <div className="relative">
         <input
@@ -203,7 +318,7 @@ const SearchWidget = ({ onSearch }: { onSearch: (term: string) => void }) => {
           onChange={(e) => onSearch(e.target.value)}
           className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
-        <i className="fas fa-search absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        <Search className="w-5 h-5 absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
       </div>
     </div>
   );
@@ -211,18 +326,42 @@ const SearchWidget = ({ onSearch }: { onSearch: (term: string) => void }) => {
 
 // Recent Posts Widget Component
 const RecentPostsWidget = () => {
+  const widgetRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(widgetRef.current, {
+        scrollTrigger: {
+          trigger: widgetRef.current,
+          start: "top bottom-=100",
+          toggleActions: "play none none none",
+        },
+        opacity: 0,
+        x: 50,
+        duration: 0.8,
+        delay: 0.1,
+        ease: "power3.out",
+      });
+    }, widgetRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-lg mb-8">
+    <div
+      ref={widgetRef}
+      className="bg-white rounded-2xl p-6 border border-gray-100 shadow-lg mb-8"
+    >
       <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Posts</h3>
       <div className="space-y-4">
         {RECENT_POSTS.map((post) => (
-          <Link
+          <a
             key={post.id}
             href={`/blog/${post.id}`}
             className="flex items-start space-x-3 group hover:bg-gray-50 p-2 rounded-lg transition-colors duration-300"
           >
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-              <i className="fas fa-newspaper text-blue-600 text-sm"></i>
+              <Newspaper className="text-blue-600 w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
               <h4 className="text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300 truncate">
@@ -230,7 +369,7 @@ const RecentPostsWidget = () => {
               </h4>
               <p className="text-xs text-gray-500 mt-1">{post.date}</p>
             </div>
-          </Link>
+          </a>
         ))}
       </div>
     </div>
@@ -239,12 +378,36 @@ const RecentPostsWidget = () => {
 
 // Categories Widget Component
 const CategoriesWidget = () => {
+  const widgetRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(widgetRef.current, {
+        scrollTrigger: {
+          trigger: widgetRef.current,
+          start: "top bottom-=100",
+          toggleActions: "play none none none",
+        },
+        opacity: 0,
+        x: 50,
+        duration: 0.8,
+        delay: 0.2,
+        ease: "power3.out",
+      });
+    }, widgetRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-lg">
+    <div
+      ref={widgetRef}
+      className="bg-white rounded-2xl p-6 border border-gray-100 shadow-lg"
+    >
       <h3 className="text-lg font-bold text-gray-900 mb-4">Categories</h3>
       <div className="space-y-2">
         {CATEGORIES.map((category, index) => (
-          <Link
+          <a
             key={index}
             href={`/blog/category/${category.name
               .toLowerCase()
@@ -257,7 +420,7 @@ const CategoriesWidget = () => {
             <span className="bg-blue-100 text-blue-600 text-xs font-semibold px-2 py-1 rounded-full">
               {category.count}
             </span>
-          </Link>
+          </a>
         ))}
       </div>
     </div>
@@ -268,6 +431,25 @@ const CategoriesWidget = () => {
 const NewsletterSection = () => {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const newsletterRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(newsletterRef.current, {
+        scrollTrigger: {
+          trigger: newsletterRef.current,
+          start: "top bottom-=100",
+          toggleActions: "play none none none",
+        },
+        opacity: 0,
+        y: 60,
+        duration: 1,
+        ease: "power3.out",
+      });
+    }, newsletterRef);
+
+    return () => ctx.revert();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -280,11 +462,10 @@ const NewsletterSection = () => {
     setIsSubmitting(true);
 
     try {
-      // TODO: Replace with your API endpoint
       await new Promise((resolve) => setTimeout(resolve, 1500));
       alert("Thank you for subscribing to our newsletter!");
       setEmail("");
-    } catch (error) {
+    } catch {
       alert("Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -292,7 +473,10 @@ const NewsletterSection = () => {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+    <section
+      ref={newsletterRef}
+      className="py-20 bg-gradient-to-br from-gray-50 to-blue-50"
+    >
       <div className="max-w-4xl mx-auto px-6 text-center">
         <h2 className="text-4xl font-bold text-gray-900 mb-6">Stay Updated</h2>
         <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
@@ -342,7 +526,7 @@ const Pagination = ({
           onClick={() => onPageChange(currentPage - 1)}
           className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 shadow-lg flex items-center space-x-2"
         >
-          <i className="fas fa-arrow-left"></i>
+          <ArrowLeft className="w-4 h-4" />
           <span>Previous</span>
         </button>
       )}
@@ -372,7 +556,7 @@ const Pagination = ({
           className="px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 shadow-lg flex items-center space-x-2"
         >
           <span>Next</span>
-          <i className="fas fa-arrow-right"></i>
+          <ArrowRight className="w-4 h-4" />
         </button>
       )}
     </div>
@@ -384,6 +568,11 @@ export default function BlogPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const postsPerPage = 4;
+
+  // Reset scroll position on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Filter posts based on search term
   const filteredPosts = useMemo(() => {
@@ -405,10 +594,15 @@ export default function BlogPage() {
     startIndex + postsPerPage
   );
 
-  // Reset to page 1 when search changes
-  useMemo(() => {
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
     setCurrentPage(1);
-  }, [searchTerm]);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <main className="min-h-screen">
@@ -423,8 +617,8 @@ export default function BlogPage() {
               {currentPosts.length > 0 ? (
                 <>
                   <div className="grid md:grid-cols-2 gap-8 mb-12">
-                    {currentPosts.map((post) => (
-                      <BlogPostCard key={post.id} post={post} />
+                    {currentPosts.map((post, index) => (
+                      <BlogPostCard key={post.id} post={post} index={index} />
                     ))}
                   </div>
 
@@ -432,13 +626,13 @@ export default function BlogPage() {
                   <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}
-                    onPageChange={setCurrentPage}
+                    onPageChange={handlePageChange}
                   />
                 </>
               ) : (
                 <div className="text-center py-12">
                   <div className="bg-gray-50 rounded-2xl p-8 max-w-md mx-auto">
-                    <i className="fas fa-search text-gray-400 text-5xl mb-4"></i>
+                    <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-xl font-bold text-gray-900 mb-2">
                       No Posts Found
                     </h3>
@@ -452,7 +646,7 @@ export default function BlogPage() {
 
             {/* Sidebar */}
             <div className="lg:col-span-1">
-              <SearchWidget onSearch={setSearchTerm} />
+              <SearchWidget onSearch={handleSearch} />
               <RecentPostsWidget />
               <CategoriesWidget />
             </div>

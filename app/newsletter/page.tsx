@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   ChevronDown,
   Mail,
@@ -14,10 +14,14 @@ import {
   Star,
   ArrowDown,
 } from "lucide-react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface Message {
   text: string;
-  type: "success" | "error" | "";
+  type: "success" | "error" | "info" | "";
 }
 
 interface FAQItem {
@@ -43,6 +47,18 @@ const NewsletterPage: React.FC = () => {
     type: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+
+  // Refs for animations
+  const heroRef = useRef(null);
+  const heroBadgeRef = useRef(null);
+  const heroTitleRef = useRef(null);
+  const heroDescRef = useRef(null);
+  const formSectionRef = useRef(null);
+  const benefitsSectionRef = useRef(null);
+  const benefitItemsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const testimonialsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const faqSectionRef = useRef(null);
+  const ctaSectionRef = useRef(null);
 
   const faqItems: FAQItem[] = [
     {
@@ -94,6 +110,146 @@ const NewsletterPage: React.FC = () => {
     },
   ];
 
+  // Hero animations
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+    const ctx = gsap.context(() => {
+      gsap.from(heroBadgeRef.current, {
+        opacity: 0,
+        y: -20,
+        duration: 0.5,
+        ease: "power2.out",
+      });
+
+      gsap.from(heroTitleRef.current, {
+        opacity: 0,
+        y: 30,
+        duration: 0.6,
+        delay: 0.1,
+        ease: "power2.out",
+      });
+
+      gsap.from(heroDescRef.current, {
+        opacity: 0,
+        y: 20,
+        duration: 0.6,
+        delay: 0.2,
+        ease: "power2.out",
+      });
+    }, heroRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  // Form and benefits section animations
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(formSectionRef.current, {
+        scrollTrigger: {
+          trigger: formSectionRef.current,
+          start: "top bottom-=50",
+          toggleActions: "play none none none",
+        },
+        opacity: 0,
+        x: -30,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+
+      gsap.from(benefitsSectionRef.current, {
+        scrollTrigger: {
+          trigger: benefitsSectionRef.current,
+          start: "top bottom-=50",
+          toggleActions: "play none none none",
+        },
+        opacity: 0,
+        x: 30,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+
+      benefitItemsRef.current.forEach((item, index) => {
+        if (item) {
+          gsap.from(item, {
+            scrollTrigger: {
+              trigger: item,
+              start: "top bottom-=50",
+              toggleActions: "play none none none",
+            },
+            opacity: 0,
+            x: 20,
+            duration: 0.5,
+            ease: "power2.out",
+          });
+        }
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  // Testimonials animations
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      testimonialsRef.current.forEach((card) => {
+        if (card) {
+          gsap.from(card, {
+            scrollTrigger: {
+              trigger: card,
+              start: "top bottom-=50",
+              toggleActions: "play none none none",
+            },
+            opacity: 0,
+            y: 30,
+            duration: 0.5,
+            ease: "power2.out",
+          });
+        }
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  // FAQ section animation
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(faqSectionRef.current, {
+        scrollTrigger: {
+          trigger: faqSectionRef.current,
+          start: "top bottom-=50",
+          toggleActions: "play none none none",
+        },
+        opacity: 0,
+        y: 30,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  // CTA section animation
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(ctaSectionRef.current, {
+        scrollTrigger: {
+          trigger: ctaSectionRef.current,
+          start: "top bottom-=50",
+          toggleActions: "play none none none",
+        },
+        opacity: 0,
+        y: 40,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
   const validateEmail = (email: string): boolean => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
@@ -103,7 +259,7 @@ const NewsletterPage: React.FC = () => {
     msg: string,
     type: "success" | "error" | "info"
   ) => {
-    setNotification({ text: msg, type: type as any });
+    setNotification({ text: msg, type: type });
     setTimeout(() => setNotification({ text: "", type: "" }), 5000);
   };
 
@@ -128,10 +284,17 @@ const NewsletterPage: React.FC = () => {
     }, 1000);
   };
 
+  const toggleFAQ = (index: number) => {
+    setExpandedFAQ(expandedFAQ === index ? null : index);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 overflow-hidden bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700">
+      <section
+        ref={heroRef}
+        className="relative pt-32 pb-20 overflow-hidden bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700"
+      >
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl animate-pulse"></div>
           <div
@@ -141,21 +304,30 @@ const NewsletterPage: React.FC = () => {
         </div>
 
         <div className="relative max-w-7xl mx-auto px-6 text-center z-20">
-          <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+          <div
+            ref={heroBadgeRef}
+            className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6"
+          >
             <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
             <span className="text-sm font-medium text-white">
               Stay Informed
             </span>
           </div>
 
-          <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+          <h1
+            ref={heroTitleRef}
+            className="text-5xl lg:text-6xl font-bold mb-6 leading-tight"
+          >
             <span className="text-white">Stay Updated with</span>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 block">
               Our Newsletter
             </span>
           </h1>
 
-          <p className="text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto">
+          <p
+            ref={heroDescRef}
+            className="text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto"
+          >
             Get the latest insights, market trends, and exclusive updates from
             Shivaay International delivered directly to your inbox.
           </p>
@@ -167,7 +339,7 @@ const NewsletterPage: React.FC = () => {
         <div className="max-w-4xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Subscription Form */}
-            <div className="newsletter-content">
+            <div ref={formSectionRef} className="newsletter-content">
               <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-600 rounded-full px-4 py-2 mb-6">
                 <Mail size={18} />
                 <span className="font-semibold">Subscribe Now</span>
@@ -248,14 +420,22 @@ const NewsletterPage: React.FC = () => {
             </div>
 
             {/* Benefits Section */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-8">
+            <div
+              ref={benefitsSectionRef}
+              className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-8"
+            >
               <h3 className="text-2xl font-bold text-gray-900 mb-6">
                 What You'll Receive
               </h3>
 
               <div className="space-y-6">
                 {/* Benefit Item 1 */}
-                <div className="flex items-start space-x-4 benefit-item">
+                <div
+                  ref={(el) => {
+                    benefitItemsRef.current[0] = el;
+                  }}
+                  className="flex items-start space-x-4 benefit-item"
+                >
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
                     <TrendingUp className="text-blue-600" size={24} />
                   </div>
@@ -271,7 +451,12 @@ const NewsletterPage: React.FC = () => {
                 </div>
 
                 {/* Benefit Item 2 */}
-                <div className="flex items-start space-x-4 benefit-item">
+                <div
+                  ref={(el) => {
+                    benefitItemsRef.current[1] = el;
+                  }}
+                  className="flex items-start space-x-4 benefit-item"
+                >
                   <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Package className="text-green-600" size={24} />
                   </div>
@@ -287,7 +472,12 @@ const NewsletterPage: React.FC = () => {
                 </div>
 
                 {/* Benefit Item 3 */}
-                <div className="flex items-start space-x-4 benefit-item">
+                <div
+                  ref={(el) => {
+                    benefitItemsRef.current[2] = el;
+                  }}
+                  className="flex items-start space-x-4 benefit-item"
+                >
                   <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Tag className="text-purple-600" size={24} />
                   </div>
@@ -303,7 +493,12 @@ const NewsletterPage: React.FC = () => {
                 </div>
 
                 {/* Benefit Item 4 */}
-                <div className="flex items-start space-x-4 benefit-item">
+                <div
+                  ref={(el) => {
+                    benefitItemsRef.current[3] = el;
+                  }}
+                  className="flex items-start space-x-4 benefit-item"
+                >
                   <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
                     <Award className="text-orange-600" size={24} />
                   </div>
@@ -368,6 +563,9 @@ const NewsletterPage: React.FC = () => {
             {testimonials.map((testimonial, idx) => (
               <div
                 key={idx}
+                ref={(el) => {
+                  testimonialsRef.current[idx] = el;
+                }}
                 className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300"
               >
                 <div className="flex items-center space-x-4 mb-4">
@@ -390,7 +588,7 @@ const NewsletterPage: React.FC = () => {
                   </div>
                 </div>
                 <p className="text-gray-600 leading-relaxed mb-4">
-                  "{testimonial.text}"
+                  {`"${testimonial.text}"`}
                 </p>
                 <div className="flex items-center space-x-1">
                   {[...Array(5)].map((_, i) => (
@@ -408,7 +606,7 @@ const NewsletterPage: React.FC = () => {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 bg-white">
+      <section ref={faqSectionRef} className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-16">
             <div className="inline-flex items-center space-x-2 bg-yellow-100 text-yellow-600 rounded-full px-4 py-2 mb-4">
@@ -425,12 +623,10 @@ const NewsletterPage: React.FC = () => {
 
           <div className="space-y-6">
             {faqItems.map((item, idx) => (
-              <div key={idx} className="bg-gray-50 rounded-2xl p-6 faq-item">
+              <div key={idx} className="bg-gray-50 rounded-2xl overflow-hidden">
                 <div
-                  className="text-lg font-semibold text-gray-900 flex items-center justify-between cursor-pointer hover:text-blue-600 transition-colors"
-                  onClick={() =>
-                    setExpandedFAQ(expandedFAQ === idx ? null : idx)
-                  }
+                  className="p-6 text-lg font-semibold text-gray-900 flex items-center justify-between cursor-pointer hover:text-blue-600 transition-colors"
+                  onClick={() => toggleFAQ(idx)}
                 >
                   <span>{item.question}</span>
                   <ChevronDown
@@ -440,11 +636,17 @@ const NewsletterPage: React.FC = () => {
                     }`}
                   />
                 </div>
-                {expandedFAQ === idx && (
-                  <div className="text-gray-600 leading-relaxed mt-3">
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                    expandedFAQ === idx
+                      ? "max-h-96 opacity-100"
+                      : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <div className="px-6 pb-6 text-gray-600 leading-relaxed">
                     {item.answer}
                   </div>
-                )}
+                </div>
               </div>
             ))}
           </div>
@@ -452,7 +654,10 @@ const NewsletterPage: React.FC = () => {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-20 relative overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800">
+      <section
+        ref={ctaSectionRef}
+        className="py-20 relative overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800"
+      >
         <div className="absolute inset-0 bg-opacity-10 bg-black"></div>
 
         <div className="relative max-w-4xl mx-auto px-6 text-center">

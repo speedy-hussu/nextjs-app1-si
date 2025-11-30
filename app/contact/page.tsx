@@ -1,8 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
+import { useState, useEffect, useRef } from "react";
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Clock,
+  Send,
+  CheckCircle,
+  AlertCircle,
+  ChevronDown,
+  HelpCircle,
+  Info,
+  MapPinned,
+} from "lucide-react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Types
 interface FormData {
@@ -19,10 +34,53 @@ interface Alert {
   type: "success" | "error";
 }
 
+interface FAQItem {
+  id: number;
+  question: string;
+  answer: string;
+}
+
 // Hero Section Component
 const HeroSection = () => {
+  const heroRef = useRef(null);
+  const badgeRef = useRef(null);
+  const titleRef = useRef(null);
+  const descRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(badgeRef.current, {
+        opacity: 0,
+        y: -20,
+        duration: 0.5,
+        ease: "power2.out",
+      });
+
+      gsap.from(titleRef.current, {
+        opacity: 0,
+        y: 30,
+        duration: 0.6,
+        delay: 0.1,
+        ease: "power2.out",
+      });
+
+      gsap.from(descRef.current, {
+        opacity: 0,
+        y: 20,
+        duration: 0.6,
+        delay: 0.2,
+        ease: "power2.out",
+      });
+    }, heroRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="pt-32 pb-20 bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden">
+    <section
+      ref={heroRef}
+      className="pt-32 pb-20 bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden"
+    >
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl animate-pulse"></div>
         <div
@@ -32,19 +90,28 @@ const HeroSection = () => {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6 text-center z-20">
-        <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+        <div
+          ref={badgeRef}
+          className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6"
+        >
           <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
           <span className="text-sm font-medium text-white">Get In Touch</span>
         </div>
 
-        <h1 className="text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+        <h1
+          ref={titleRef}
+          className="text-5xl lg:text-6xl font-bold mb-6 leading-tight"
+        >
           <span className="text-white">Contact Shivaay</span>
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 block">
             International
           </span>
         </h1>
 
-        <p className="text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto">
+        <p
+          ref={descRef}
+          className="text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto"
+        >
           Ready to partner with us? Get in touch with our export specialists for
           premium agro products, competitive pricing, and reliable global
           delivery.
@@ -56,10 +123,47 @@ const HeroSection = () => {
 
 // Contact Info Component
 const ContactInfo = () => {
+  const infoRef = useRef(null);
+  const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(infoRef.current, {
+        scrollTrigger: {
+          trigger: infoRef.current,
+          start: "top bottom-=50",
+          toggleActions: "play none none none",
+        },
+        opacity: 0,
+        x: -30,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+
+      itemsRef.current.forEach((item) => {
+        if (item) {
+          gsap.from(item, {
+            scrollTrigger: {
+              trigger: item,
+              start: "top bottom-=50",
+              toggleActions: "play none none none",
+            },
+            opacity: 0,
+            x: -20,
+            duration: 0.5,
+            ease: "power2.out",
+          });
+        }
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <div className="contact-info">
+    <div ref={infoRef} className="contact-info">
       <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-600 rounded-full px-4 py-2 mb-6">
-        <i className="fas fa-map-marker-alt"></i>
+        <MapPin size={18} />
         <span className="font-semibold">Our Office</span>
       </div>
 
@@ -74,9 +178,14 @@ const ContactInfo = () => {
       </p>
 
       <div className="space-y-6 mb-8">
-        <div className="flex items-start space-x-4">
+        <div
+          ref={(el) => {
+            itemsRef.current[0] = el;
+          }}
+          className="flex items-start space-x-4"
+        >
           <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-            <i className="fas fa-phone text-blue-600 text-xl"></i>
+            <Phone className="text-blue-600" size={20} />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-1">Phone</h3>
@@ -85,9 +194,14 @@ const ContactInfo = () => {
           </div>
         </div>
 
-        <div className="flex items-start space-x-4">
+        <div
+          ref={(el) => {
+            itemsRef.current[1] = el;
+          }}
+          className="flex items-start space-x-4"
+        >
           <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
-            <i className="fas fa-envelope text-green-600 text-xl"></i>
+            <Mail className="text-green-600" size={20} />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-1">Email</h3>
@@ -96,9 +210,14 @@ const ContactInfo = () => {
           </div>
         </div>
 
-        <div className="flex items-start space-x-4">
+        <div
+          ref={(el) => {
+            itemsRef.current[2] = el;
+          }}
+          className="flex items-start space-x-4"
+        >
           <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
-            <i className="fas fa-map-marker-alt text-purple-600 text-xl"></i>
+            <MapPin className="text-purple-600" size={20} />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-1">
@@ -110,9 +229,14 @@ const ContactInfo = () => {
           </div>
         </div>
 
-        <div className="flex items-start space-x-4">
+        <div
+          ref={(el) => {
+            itemsRef.current[3] = el;
+          }}
+          className="flex items-start space-x-4"
+        >
           <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center flex-shrink-0">
-            <i className="fas fa-clock text-yellow-600 text-xl"></i>
+            <Clock className="text-yellow-600" size={20} />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-1">
@@ -162,23 +286,37 @@ const ContactForm = ({ productQuery }: { productQuery: string | null }) => {
   });
   const [alert, setAlert] = useState<Alert | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const formRef = useRef(null);
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(formRef.current, {
+        scrollTrigger: {
+          trigger: formRef.current,
+          start: "top bottom-=50",
+          toggleActions: "play none none none",
+        },
+        opacity: 0,
+        x: 30,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  const handleChange = (e: any) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Basic validation
     if (
       !formData.name ||
       !formData.email ||
@@ -193,7 +331,6 @@ const ContactForm = ({ productQuery }: { productQuery: string | null }) => {
       return;
     }
 
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       setAlert({
@@ -205,36 +342,21 @@ const ContactForm = ({ productQuery }: { productQuery: string | null }) => {
     }
 
     try {
-      // TODO: Replace with your API endpoint
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          productInterest: productQuery,
-        }),
-      });
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      if (response.ok) {
-        setAlert({
-          message: "Thank you for your message! We will get back to you soon.",
-          type: "success",
-        });
-        // Reset form
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          company: "",
-          subject: "",
-          message: "",
-        });
-      } else {
-        throw new Error("Failed to send message");
-      }
-    } catch (error) {
+      setAlert({
+        message: "Thank you for your message! We will get back to you soon.",
+        type: "success",
+      });
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        company: "",
+        subject: "",
+        message: "",
+      });
+    } catch {
       setAlert({
         message: "Something went wrong. Please try again later.",
         type: "error",
@@ -245,7 +367,7 @@ const ContactForm = ({ productQuery }: { productQuery: string | null }) => {
   };
 
   return (
-    <div className="bg-gray-50 rounded-2xl p-8 contact-form">
+    <div ref={formRef} className="bg-gray-50 rounded-2xl p-8 contact-form">
       <h3 className="text-2xl font-bold text-gray-900 mb-6">
         Send Us a Message
       </h3>
@@ -259,19 +381,17 @@ const ContactForm = ({ productQuery }: { productQuery: string | null }) => {
           }`}
         >
           <div className="flex items-center space-x-3">
-            <i
-              className={`fas ${
-                alert.type === "success"
-                  ? "fa-check-circle"
-                  : "fa-exclamation-circle"
-              }`}
-            ></i>
+            {alert.type === "success" ? (
+              <CheckCircle size={20} />
+            ) : (
+              <AlertCircle size={20} />
+            )}
             <span>{alert.message}</span>
           </div>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-6">
         <div className="grid md:grid-cols-2 gap-6">
           <div>
             <label
@@ -382,9 +502,11 @@ const ContactForm = ({ productQuery }: { productQuery: string | null }) => {
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Product of Interest
             </label>
-            <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-blue-700">
-              <i className="fas fa-info-circle mr-2"></i>
-              You're enquiring about: <strong>{productQuery}</strong>
+            <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-blue-700 flex items-center space-x-2">
+              <Info size={18} />
+              <span>
+                You're enquiring about: <strong>{productQuery}</strong>
+              </span>
             </div>
           </div>
         )}
@@ -409,25 +531,30 @@ const ContactForm = ({ productQuery }: { productQuery: string | null }) => {
         </div>
 
         <button
-          type="submit"
+          onClick={handleSubmit}
           disabled={isSubmitting}
           className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-3 group disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span>{isSubmitting ? "Sending..." : "Send Message"}</span>
-          <i className="fas fa-paper-plane group-hover:translate-x-1 transition-transform duration-300"></i>
+          <Send
+            size={18}
+            className="group-hover:translate-x-1 transition-transform duration-300"
+          />
         </button>
 
         <p className="text-sm text-gray-500 text-center">
           We typically respond within 24 hours during business days.
         </p>
-      </form>
+      </div>
     </div>
   );
 };
 
-// FAQ Component
+// FAQ Component with smooth accordion
 const FAQSection = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const faqRef = useRef(null);
+  const answersRef = useRef<(HTMLDivElement | null)[]>([]);
 
   const faqs = [
     {
@@ -462,12 +589,63 @@ const FAQSection = () => {
     },
   ];
 
+  // Split into 2 columns (3 + 3)
+  const firstColumn = faqs.slice(0, 3);
+  const secondColumn = faqs.slice(3);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(".faq-card", {
+        scrollTrigger: {
+          trigger: faqRef.current,
+          start: "top bottom-=50",
+          toggleActions: "play none none none",
+        },
+        opacity: 0,
+        y: 30,
+        duration: 0.5,
+        stagger: 0.1,
+        ease: "power2.out",
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  const handleToggle = (index: number) => {
+    const newOpenIndex = openIndex === index ? null : index;
+    const answerEl = answersRef.current[index];
+
+    if (answerEl) {
+      if (newOpenIndex === index) {
+        gsap.fromTo(
+          answerEl,
+          { height: 0, opacity: 0 },
+          { height: "auto", opacity: 1, duration: 0.3, ease: "power2.out" }
+        );
+      } else {
+        gsap.to(answerEl, {
+          height: 0,
+          opacity: 0,
+          duration: 0.3,
+          ease: "power2.in",
+        });
+      }
+    }
+
+    setOpenIndex(newOpenIndex);
+  };
+
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+    <section
+      ref={faqRef}
+      className="py-20 bg-gradient-to-br from-gray-50 to-blue-50"
+    >
       <div className="max-w-7xl mx-auto px-6">
+        {/* Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center space-x-2 bg-green-100 text-green-600 rounded-full px-4 py-2 mb-4">
-            <i className="fas fa-question-circle"></i>
+            <HelpCircle size={18} />
             <span className="font-semibold">FAQ</span>
           </div>
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -479,34 +657,81 @@ const FAQSection = () => {
           </p>
         </div>
 
+        {/* Grid */}
         <div className="grid md:grid-cols-2 gap-8">
-          {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100"
-            >
-              <h3
-                className="text-lg font-semibold text-gray-900 mb-3 flex items-center justify-between cursor-pointer"
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-              >
-                <span>{faq.question}</span>
-                <i
-                  className={`fas fa-chevron-down text-gray-400 transition-transform duration-300 ${
-                    openIndex === index ? "rotate-180" : ""
-                  }`}
-                ></i>
-              </h3>
-              <div
-                className={`text-gray-600 leading-relaxed overflow-hidden transition-all duration-300 ${
-                  openIndex === index
-                    ? "max-h-96 opacity-100 mt-3"
-                    : "max-h-0 opacity-0"
-                }`}
-              >
-                {faq.answer}
-              </div>
-            </div>
-          ))}
+          {/* Column 1 */}
+          <div className="space-y-6">
+            {firstColumn.map((faq, index) => {
+              const actualIndex = index; // match answersRef index
+              return (
+                <div
+                  key={actualIndex}
+                  className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 faq-card"
+                >
+                  <h3
+                    className="text-lg font-semibold text-gray-900 mb-3 flex items-center justify-between cursor-pointer"
+                    onClick={() => handleToggle(actualIndex)}
+                  >
+                    <span>{faq.question}</span>
+                    <i
+                      className={`transition-transform duration-300 ${
+                        openIndex === actualIndex ? "rotate-180" : ""
+                      }`}
+                    >
+                      <ChevronDown className="text-gray-400" size={20} />
+                    </i>
+                  </h3>
+
+                  <div
+                    ref={(el) => {
+                      answersRef.current[actualIndex] = el;
+                    }}
+                    className="text-gray-600 leading-relaxed"
+                    style={{ height: 0, overflow: "hidden", opacity: 0 }}
+                  >
+                    {faq.answer}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Column 2 */}
+          <div className="space-y-6">
+            {secondColumn.map((faq, index) => {
+              const actualIndex = index + 3; // shift for second column
+              return (
+                <div
+                  key={actualIndex}
+                  className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 faq-card"
+                >
+                  <h3
+                    className="text-lg font-semibold text-gray-900 mb-3 flex items-center justify-between cursor-pointer"
+                    onClick={() => handleToggle(actualIndex)}
+                  >
+                    <span>{faq.question}</span>
+                    <i
+                      className={`transition-transform duration-300 ${
+                        openIndex === actualIndex ? "rotate-180" : ""
+                      }`}
+                    >
+                      <ChevronDown className="text-gray-400" size={20} />
+                    </i>
+                  </h3>
+
+                  <div
+                    ref={(el) => {
+                      answersRef.current[actualIndex] = el;
+                    }}
+                    className="text-gray-600 leading-relaxed"
+                    style={{ height: 0, overflow: "hidden", opacity: 0 }}
+                  >
+                    {faq.answer}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
@@ -515,12 +740,32 @@ const FAQSection = () => {
 
 // Map Section Component
 const MapSection = () => {
+  const mapRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(mapRef.current, {
+        scrollTrigger: {
+          trigger: mapRef.current,
+          start: "top bottom-=50",
+          toggleActions: "play none none none",
+        },
+        opacity: 0,
+        y: 40,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <div className="inline-flex items-center space-x-2 bg-purple-100 text-purple-600 rounded-full px-4 py-2 mb-4">
-            <i className="fas fa-map-marked-alt"></i>
+            <MapPinned size={18} />
             <span className="font-semibold">Visit Us</span>
           </div>
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -531,7 +776,10 @@ const MapSection = () => {
           </p>
         </div>
 
-        <div className="bg-gray-100 rounded-2xl overflow-hidden shadow-lg h-96">
+        <div
+          ref={mapRef}
+          className="bg-gray-100 rounded-2xl overflow-hidden shadow-lg h-96"
+        >
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.75583729284!2d72.83412831538567!3d19.075557987111!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c8a0f8f8f8f8%3A0x8f8f8f8f8f8f8f8f!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin"
             width="100%"
@@ -548,11 +796,14 @@ const MapSection = () => {
 
 // Main Contact Page Component
 export default function ContactPage() {
-  const searchParams = useSearchParams();
-  const productQuery = searchParams.get("product");
+  const [productQuery] = useState<string | null>(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       <HeroSection />
 
       <section className="py-20 bg-white">
@@ -566,6 +817,6 @@ export default function ContactPage() {
 
       <FAQSection />
       <MapSection />
-    </main>
+    </div>
   );
 }

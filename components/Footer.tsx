@@ -73,7 +73,7 @@ const Footer: React.FC = () => {
                 </li>
                 <li>
                   <Link
-                    href="/about-us"
+                    href="/about"
                     className="text-blue-200 hover:text-white transition-colors"
                   >
                     About Us
