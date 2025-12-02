@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Link from "next/link";
 
 // Register GSAP plugins
 if (typeof window !== "undefined") {
@@ -304,16 +305,26 @@ const HomePage = () => {
 
               <div className="hero-buttons flex flex-col sm:flex-row gap-4 mb-8">
                 <button className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl text-lg text-center group">
+                  <Link href="/contact">
                   <span className="flex items-center justify-center space-x-2">
                     <span>Get Free Quote</span>
                     <ArrowRight
                       size={20}
                       className="group-hover:translate-x-1 transition-transform duration-300"
-                    />
+                      />
                   </span>
+                      </Link>
                 </button>
                 <button className="border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all duration-300 backdrop-blur-sm text-lg text-center">
-                  Explore Products
+                  <Link href="/products">
+                  <span className="flex items-center justify-center space-x-2">
+                    <span>Explore Products</span>
+                    <ArrowRight
+                      size={20}
+                      className="group-hover:translate-x-1 transition-transform duration-300"
+                      />
+                  </span>
+                  </Link>
                 </button>
               </div>
 

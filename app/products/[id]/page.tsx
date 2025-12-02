@@ -4,7 +4,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   CheckCircle,
   Globe,
@@ -40,140 +40,57 @@ interface Product {
   image?: string;
 }
 
-// Product data (in real app, this would come from API/database)
-const PRODUCTS: Product[] = [
-  {
-    id: "1",
-    name: "Premium Basmati Rice",
-    category: "rice",
-    description:
-      "Aromatic long-grain rice known for its distinctive fragrance and exquisite flavor. Perfect for international markets and premium culinary applications. Our Basmati rice is aged to perfection, ensuring superior quality and taste in every grain.",
-    specifications:
-      "Extra long grain (8.0mm+)\nAromatic fragrance\nNon-sticky texture\nAged for 12-24 months\nMoisture content: 12-13%\nBroken grains: Less than 5%",
-    image:
-      "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800&q=80",
-  },
-  {
-    id: "2",
-    name: "Quality Wheat Grains",
-    category: "wheat",
-    description:
-      "High-protein wheat grains suitable for various culinary applications. Sourced from trusted farmers with rigorous quality control. Perfect for flour production and bakery products.",
-    specifications:
-      "Protein content: 11-13%\nMoisture: 12% max\nUniform grain size\nExcellent milling quality\nNo foreign matter\nNatural golden color",
-    image:
-      "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800&q=80",
-  },
-  {
-    id: "3",
-    name: "Organic Turmeric Powder",
-    category: "spices",
-    description:
-      "Pure organic turmeric with rich golden color and earthy aroma. Processed under strict quality control to preserve natural properties. Contains high curcumin content for maximum health benefits.",
-    specifications:
-      "100% organic certified\nCurcumin content: 3-5%\nVibrant golden color\nFine powder texture\nNo artificial additives\nMoisture: 10% max",
-    image:
-      "https://images.unsplash.com/photo-1615485500834-bc10199bc768?w=800&q=80",
-  },
-  {
-    id: "4",
-    name: "Premium Red Lentils",
-    category: "pulses",
-    description:
-      "High-quality red lentils with excellent nutritional value. Carefully processed and packed to maintain freshness and quality. Rich in protein and fiber, perfect for international markets.",
-    specifications:
-      "Protein: 24-26%\nUniform red color\nClean and sorted\nQuick cooking (15-20 min)\nMoisture: 12% max\nSplit and polished",
-    image:
-      "https://images.unsplash.com/photo-1610640964704-d0e9924f4e2d?w=800&q=80",
-  },
-  {
-    id: "5",
-    name: "Sona Masoori Rice",
-    category: "rice",
-    description:
-      "Medium-grain aromatic rice, lightweight and low in starch. Ideal for everyday cooking and popular in international markets. Known for its soft texture and easy digestibility.",
-    specifications:
-      "Medium grain length\nLow starch content\nQuick cooking time\nSoft and fluffy texture\nMoisture: 13% max\nBroken: Less than 5%",
-    image:
-      "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800&q=80",
-  },
-  {
-    id: "6",
-    name: "Red Chili Powder",
-    category: "spices",
-    description:
-      "Premium quality red chili powder with perfect heat and vibrant color. Sourced from the finest chilies and ground to perfection. Adds authentic flavor and color to any cuisine.",
-    specifications:
-      "Heat level: Medium to high\nRich red color\nFine powder consistency\n100% pure, no additives\nMoisture: 8% max\nCapsaicin content: 0.5-1%",
-    image:
-      "https://images.unsplash.com/photo-1583032015627-7a5c8e80114b?w=800&q=80",
-  },
-  {
-    id: "7",
-    name: "Whole Wheat Flour",
-    category: "wheat",
-    description:
-      "Finely milled whole wheat flour rich in fiber and nutrients. Perfect for making traditional breads and healthy baked goods. Stone-ground to preserve natural nutrients.",
-    specifications:
-      "100% whole grain\nHigh fiber content\nFine texture\nProtein: 12-14%\nAsh content: 1.5-2%\nNatural wheat color",
-    image:
-      "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80",
-  },
-  {
-    id: "8",
-    name: "Yellow Split Peas",
-    category: "pulses",
-    description:
-      "Premium quality yellow split peas, rich in protein and perfect for soups and traditional dishes. Carefully cleaned and sorted for consistent quality.",
-    specifications:
-      "Split and cleaned\nProtein: 22-24%\nUniform yellow color\nQuick cooking\nMoisture: 12% max\nFiber rich",
-    image:
-      "https://images.unsplash.com/photo-1595855759920-86582396756a?w=800&q=80",
-  },
-  {
-    id: "9",
-    name: "Coriander Powder",
-    category: "spices",
-    description:
-      "Aromatic coriander powder with a fresh, citrusy flavor. Essential spice for various cuisines worldwide. Ground from premium quality coriander seeds.",
-    specifications:
-      "Fresh aroma\nFine powder texture\nNatural processing\nPreservative-free\nLight brown color\nMoisture: 9% max",
-    image:
-      "https://images.unsplash.com/photo-1599909533026-8f1960238449?w=800&q=80",
-  },
-];
 
 const ProductDetailPage = () => {
   const params = useParams();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const scope = useRef(null); // Ref for the main container
 
   useEffect(() => {
-    const fetchData = () => {
+    const fetchData = async () => {
       if (params?.id) {
         const productId = params.id as string;
 
-        // Find the current product
-        const foundProduct = PRODUCTS.find((p) => p.id === productId);
-        setProduct(foundProduct || null);
+        try {
+          setIsLoading(true);
+          
+          // Fetch the current product
+          const productResponse = await fetch(`/api/products/${productId}`);
+          if (!productResponse.ok) {
+            setIsLoading(false);
+            router.replace("/not-found");
+            return;
+          }
+          const productData = await productResponse.json();
+          setProduct(productData);
 
-        // Get related products (same category, excluding current)
-        if (foundProduct) {
-          const related = PRODUCTS.filter(
-            (p) =>
-              p.category === foundProduct.category && p.id !== foundProduct.id
-          ).slice(0, 3);
-          setRelatedProducts(related);
+          // Fetch all products to get related ones
+          const allProductsResponse = await fetch("/api/products");
+          if (allProductsResponse.ok) {
+            const allProducts = await allProductsResponse.json();
+            // Get related products (same category, excluding current)
+            const related = allProducts.filter(
+              (p: Product) =>
+                p.category === productData.category && p.id !== productData.id
+            ).slice(0, 3);
+            setRelatedProducts(related);
+          }
+        } catch (err) {
+          console.error("Error fetching product:", err);
+          setIsLoading(false);
+          router.replace("/not-found");
+          return;
+        } finally {
+          setIsLoading(false);
         }
-
-        setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [params]);
+  }, [params, router]);
 
   useEffect(() => {
     // GSAP animations - only run when product is loaded and GSAP is registered

@@ -1,3 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 /* File: assets/css/style.css */
 * {
   margin: 0;

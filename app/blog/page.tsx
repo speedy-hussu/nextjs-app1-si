@@ -26,21 +26,22 @@ interface BlogPost {
   date: string;
   image?: string;
   category: string;
-  gradient: string;
-  icon: string;
-}
-
-interface RecentPost {
-  id: string;
-  title: string;
-  date: string;
-  image?: string;
+  readTime?: number;
+  // Optional visual fields for backwards compatibility with old static data
+  gradient?: string;
+  icon?: string;
 }
 
 interface Category {
   name: string;
   count: number;
 }
+
+const CATEGORY_OPTIONS = [
+  "Industry Insights",
+  "Export Guidelines",
+  "Quality Standards",
+];
 
 // Icon mapping
 const iconMap: { [key: string]: any } = {
@@ -49,68 +50,6 @@ const iconMap: { [key: string]: any } = {
   "fa-tractor": Tractor,
   "fa-ship": Ship,
 };
-
-// Sample blog posts data
-const BLOG_POSTS: BlogPost[] = [
-  {
-    id: "1",
-    title: "The Future of Global Agri-Exports: Trends and Opportunities",
-    excerpt:
-      "The global agricultural export market is undergoing significant transformation. With increasing demand for organic and sustainably sourced products...",
-    author: "Rajesh Kumar",
-    date: "Jan 15, 2024",
-    category: "Industry",
-    gradient: "from-blue-400 to-blue-600",
-    icon: "fa-newspaper",
-  },
-  {
-    id: "2",
-    title: "Quality Standards in Rice Export: What Buyers Look For",
-    excerpt:
-      "Exporting rice requires adherence to strict quality standards that vary by destination market. Key parameters include grain length, aroma, moisture content...",
-    author: "Priya Sharma",
-    date: "Jan 12, 2024",
-    category: "Quality",
-    gradient: "from-green-400 to-green-600",
-    icon: "fa-seedling",
-  },
-  {
-    id: "3",
-    title: "Sustainable Farming Practices in Modern Agriculture",
-    excerpt:
-      "Sustainability is no longer an option but a necessity in modern agriculture. At Shivaay International, we work with farmers who implement water conservation...",
-    author: "Amit Patel",
-    date: "Jan 8, 2024",
-    category: "Sustainability",
-    gradient: "from-yellow-400 to-yellow-600",
-    icon: "fa-tractor",
-  },
-  {
-    id: "4",
-    title: "Understanding International Shipping for Agro Products",
-    excerpt:
-      "Shipping agricultural products internationally involves navigating complex logistics and regulations. Key considerations include proper documentation, temperature control...",
-    author: "Neha Gupta",
-    date: "Jan 5, 2024",
-    category: "Logistics",
-    gradient: "from-purple-400 to-purple-600",
-    icon: "fa-ship",
-  },
-];
-
-const RECENT_POSTS: RecentPost[] = [
-  { id: "1", title: "The Future of Global Agri-Exports", date: "Jan 15, 2024" },
-  { id: "2", title: "Quality Standards in Rice Export", date: "Jan 12, 2024" },
-  { id: "3", title: "Sustainable Farming Practices", date: "Jan 8, 2024" },
-  { id: "4", title: "International Shipping Guide", date: "Jan 5, 2024" },
-  { id: "5", title: "Organic Certification Process", date: "Jan 1, 2024" },
-];
-
-const CATEGORIES: Category[] = [
-  { name: "Industry Insights", count: 4 },
-  { name: "Export Guidelines", count: 2 },
-  { name: "Quality Standards", count: 3 },
-];
 
 // Hero Section Component
 const HeroSection = () => {
@@ -209,7 +148,8 @@ const HeroSection = () => {
 // Blog Post Card Component
 const BlogPostCard = ({ post, index }: { post: BlogPost; index: number }) => {
   const cardRef = useRef(null);
-  const Icon = iconMap[post.icon] || Newspaper;
+  const Icon = post.icon ? iconMap[post.icon] || Newspaper : Newspaper;
+  const gradientClass = post.gradient || "from-blue-400 to-blue-600";
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -235,18 +175,33 @@ const BlogPostCard = ({ post, index }: { post: BlogPost; index: number }) => {
       ref={cardRef}
       className="bg-white rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 shadow-lg"
     >
-      <div
-        className={`h-48 bg-gradient-to-br ${post.gradient} relative overflow-hidden`}
-      >
-        <div className="w-full h-full flex items-center justify-center">
-          <Icon className="text-white w-16 h-16 opacity-50" />
+      {post.image ? (
+        <div className="h-48 relative overflow-hidden">
+          <img
+            src={post.image}
+            alt={post.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-sm rounded-full px-3 py-1">
+            <span className="text-white text-sm font-semibold">
+              {post.category}
+            </span>
+          </div>
         </div>
-        <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
-          <span className="text-white text-sm font-semibold">
-            {post.category}
-          </span>
+      ) : (
+        <div
+          className={`h-48 bg-gradient-to-br ${gradientClass} relative overflow-hidden`}
+        >
+          <div className="w-full h-full flex items-center justify-center">
+            <Icon className="text-white w-16 h-16 opacity-50" />
+          </div>
+          <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
+            <span className="text-white text-sm font-semibold">
+              {post.category}
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="p-6">
         <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
@@ -268,9 +223,6 @@ const BlogPostCard = ({ post, index }: { post: BlogPost; index: number }) => {
             {post.title}
           </a>
         </h2>
-
-        <p className="text-gray-600 leading-relaxed mb-4">{post.excerpt}</p>
-
         <a
           href={`/blog/${post.id}`}
           className="inline-flex items-center space-x-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors duration-300 group"
@@ -325,7 +277,7 @@ const SearchWidget = ({ onSearch }: { onSearch: (term: string) => void }) => {
 };
 
 // Recent Posts Widget Component
-const RecentPostsWidget = () => {
+const RecentPostsWidget = ({ posts }: { posts: BlogPost[] }) => {
   const widgetRef = useRef(null);
 
   useEffect(() => {
@@ -354,7 +306,7 @@ const RecentPostsWidget = () => {
     >
       <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Posts</h3>
       <div className="space-y-4">
-        {RECENT_POSTS.map((post) => (
+        {posts.map((post) => (
           <a
             key={post.id}
             href={`/blog/${post.id}`}
@@ -377,7 +329,7 @@ const RecentPostsWidget = () => {
 };
 
 // Categories Widget Component
-const CategoriesWidget = () => {
+const CategoriesWidget = ({ categories }: { categories: Category[] }) => {
   const widgetRef = useRef(null);
 
   useEffect(() => {
@@ -406,7 +358,7 @@ const CategoriesWidget = () => {
     >
       <h3 className="text-lg font-bold text-gray-900 mb-4">Categories</h3>
       <div className="space-y-2">
-        {CATEGORIES.map((category, index) => (
+        {categories.map((category, index) => (
           <a
             key={index}
             href={`/blog/category/${category.name
@@ -567,24 +519,42 @@ const Pagination = ({
 export default function BlogPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
   const postsPerPage = 4;
 
   // Reset scroll position on mount
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch("/api/blog");
+        if (res.ok) {
+          const data: BlogPost[] = await res.json();
+          setPosts(data);
+        }
+      } catch (err) {
+        console.error("Error fetching blog posts:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
   }, []);
 
   // Filter posts based on search term
   const filteredPosts = useMemo(() => {
-    if (!searchTerm) return BLOG_POSTS;
+    if (!searchTerm) return posts;
 
     const term = searchTerm.toLowerCase();
-    return BLOG_POSTS.filter(
+    return posts.filter(
       (post) =>
         post.title.toLowerCase().includes(term) ||
         post.excerpt.toLowerCase().includes(term)
     );
-  }, [searchTerm]);
+  }, [searchTerm, posts]);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
@@ -593,6 +563,18 @@ export default function BlogPage() {
     startIndex,
     startIndex + postsPerPage
   );
+
+  const recentPosts = useMemo(
+    () => posts.slice(0, 5),
+    [posts]
+  );
+
+  const categories = useMemo(() => {
+    return CATEGORY_OPTIONS.map((name) => ({
+      name,
+      count: posts.filter((post) => post.category === name).length,
+    }));
+  }, [posts]);
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
@@ -647,8 +629,8 @@ export default function BlogPage() {
             {/* Sidebar */}
             <div className="lg:col-span-1">
               <SearchWidget onSearch={handleSearch} />
-              <RecentPostsWidget />
-              <CategoriesWidget />
+              <RecentPostsWidget posts={recentPosts} />
+              <CategoriesWidget categories={categories} />
             </div>
           </div>
         </div>

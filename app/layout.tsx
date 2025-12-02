@@ -29,10 +29,7 @@ export default function RootLayout({
         {/* ============================================ */}
 
         {/* Tailwind CSS */}
-        <Script
-          src="https://cdn.tailwindcss.com"
-          strategy="beforeInteractive"
-        />
+       
 
         {/* GSAP Animation Library */}
         <Script

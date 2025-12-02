@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import {
   User,
   Calendar,
@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useParams } from "next/navigation";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -26,14 +27,8 @@ interface BlogPost {
   category: string;
   readTime: number;
   image?: string;
-  summary: string;
-}
-
-interface RecentPost {
-  id: string;
-  title: string;
-  date: string;
-  image?: string;
+  excerpt?: string;
+  summary?: string;
 }
 
 interface Category {
@@ -41,104 +36,19 @@ interface Category {
   count: number;
 }
 
-// Sample blog post data
-const BLOG_POSTS: Record<string, BlogPost> = {
-  "1": {
-    id: "1",
-    title: "The Future of Global Agri-Exports: Trends and Opportunities",
-    content: `The global agricultural export market is undergoing significant transformation. With increasing demand for organic and sustainably sourced products, exporters must adapt to evolving consumer preferences and regulatory requirements.
+const CATEGORY_OPTIONS = [
+  "Industry Insights",
+  "Export Guidelines",
+  "Quality Standards",
+];
 
-Key trends shaping the industry include:
-
-Digital transformation in supply chain management has revolutionized how agro products are tracked, traced, and delivered worldwide. Advanced technologies enable real-time monitoring and ensure quality maintenance throughout the export process.
-
-Sustainability has become more than just a buzzword—it's now a fundamental requirement for international trade. Buyers increasingly prefer suppliers who can demonstrate eco-friendly farming practices and ethical sourcing.
-
-Quality certifications remain paramount in securing international contracts. ISO standards, organic certifications, and country-specific compliance requirements must be meticulously maintained.
-
-The rise of e-commerce platforms has opened new channels for agro exporters to reach global markets directly, bypassing traditional intermediaries and improving profit margins for farmers.
-
-Climate change adaptation strategies are becoming essential as weather patterns affect crop yields and product availability. Forward-thinking exporters are diversifying their sourcing regions and product portfolios.`,
-    author: "Rajesh Kumar",
-    date: "January 15, 2024",
-    category: "Industry Insights",
-    readTime: 5,
-    summary:
-      "Explore the latest trends transforming the global agricultural export market, including digital transformation, sustainability requirements, and emerging opportunities for exporters.",
-  },
-  "2": {
-    id: "2",
-    title: "Quality Standards in Rice Export: What Buyers Look For",
-    content: `Exporting rice requires adherence to strict quality standards that vary by destination market. Understanding these parameters is crucial for successful international trade.
-
-Grain characteristics play a vital role in rice export. Buyers evaluate grain length, width, and uniformity. Basmati rice, for instance, must meet specific elongation ratios after cooking.
-
-Moisture content typically ranges between 12-14% for export-grade rice. Higher moisture levels can lead to spoilage during shipping and storage.
-
-Broken grain percentage must be minimized. Premium grades allow only 5% broken grains, while standard grades may accept up to 25%.
-
-Aroma and flavor profiles are particularly important for specialty rice varieties. Natural aging processes enhance these characteristics.
-
-Packaging standards ensure product integrity throughout the supply chain. Export-grade rice requires food-safe, moisture-resistant packaging materials.`,
-    author: "Priya Sharma",
-    date: "January 12, 2024",
-    category: "Quality Standards",
-    readTime: 4,
-    summary:
-      "Learn about the critical quality parameters and standards that international rice buyers expect, from grain characteristics to packaging requirements.",
-  },
-  "3": {
-    id: "3",
-    title: "Sustainable Farming Practices in Modern Agriculture",
-    content: `Sustainability is no longer an option but a necessity in modern agriculture. At Shivaay International, we work with farmers who implement water conservation techniques, organic pest control, and soil health management.
-
-Water conservation methods include drip irrigation systems that reduce water usage by up to 50% while maintaining crop yields. Rainwater harvesting provides supplementary irrigation during dry periods.
-
-Organic farming practices eliminate synthetic pesticides and fertilizers, producing healthier crops that command premium prices in international markets.
-
-Crop rotation strategies maintain soil fertility naturally and reduce pest populations without chemical intervention.
-
-Carbon sequestration through sustainable practices helps combat climate change while improving soil quality for future generations.`,
-    author: "Amit Patel",
-    date: "January 8, 2024",
-    category: "Sustainability",
-    readTime: 6,
-    summary:
-      "Discover how modern sustainable farming practices benefit both the environment and export business profitability.",
-  },
-  "4": {
-    id: "4",
-    title: "Understanding International Shipping for Agro Products",
-    content: `Shipping agricultural products internationally involves navigating complex logistics and regulations. Proper documentation, temperature control, and timing are critical factors.
-
-Export documentation requires certificates of origin, phytosanitary certificates, and quality inspection reports. Each destination country has specific requirements.
-
-Container selection depends on product type and shipping duration. Refrigerated containers maintain freshness for temperature-sensitive products.
-
-Shipping routes and timing must consider seasonal factors, port congestion, and delivery deadlines to ensure products arrive in optimal condition.
-
-Insurance coverage protects against transit risks including weather damage, delays, and handling issues.`,
-    author: "Neha Gupta",
-    date: "January 5, 2024",
-    category: "Logistics",
-    readTime: 5,
-    summary:
-      "Navigate the complexities of international agro product shipping with this comprehensive guide to documentation, logistics, and best practices.",
-  },
+// Helper to build categories from posts
+const buildCategories = (posts: BlogPost[]): Category[] => {
+  return CATEGORY_OPTIONS.map((name) => ({
+    name,
+    count: posts.filter((post) => post.category === name).length,
+  }));
 };
-
-const RECENT_POSTS: RecentPost[] = [
-  { id: "1", title: "The Future of Global Agri-Exports", date: "Jan 15, 2024" },
-  { id: "2", title: "Quality Standards in Rice Export", date: "Jan 12, 2024" },
-  { id: "3", title: "Sustainable Farming Practices", date: "Jan 8, 2024" },
-  { id: "4", title: "International Shipping Guide", date: "Jan 5, 2024" },
-];
-
-const CATEGORIES: Category[] = [
-  { name: "Industry Insights", count: 4 },
-  { name: "Export Guidelines", count: 2 },
-  { name: "Quality Standards", count: 3 },
-];
 
 // Hero Section Component
 const HeroSection = ({ post }: { post: BlogPost }) => {
@@ -273,7 +183,13 @@ const AboutWidget = () => {
   );
 };
 
-const RecentPostsWidget = ({ currentPostId }: { currentPostId: string }) => {
+const RecentPostsWidget = ({
+  currentPostId,
+  posts,
+}: {
+  currentPostId: string;
+  posts: BlogPost[];
+}) => {
   const widgetRef = useRef(null);
 
   useEffect(() => {
@@ -302,7 +218,8 @@ const RecentPostsWidget = ({ currentPostId }: { currentPostId: string }) => {
     >
       <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Posts</h3>
       <div className="space-y-4">
-        {RECENT_POSTS.filter((post) => post.id !== currentPostId)
+        {posts
+          .filter((post) => post.id !== currentPostId)
           .slice(0, 4)
           .map((post) => (
             <a
@@ -326,7 +243,7 @@ const RecentPostsWidget = ({ currentPostId }: { currentPostId: string }) => {
   );
 };
 
-const CategoriesWidget = () => {
+const CategoriesWidget = ({ categories }: { categories: Category[] }) => {
   const widgetRef = useRef(null);
 
   useEffect(() => {
@@ -355,7 +272,7 @@ const CategoriesWidget = () => {
     >
       <h3 className="text-lg font-bold text-gray-900 mb-4">Categories</h3>
       <div className="space-y-2">
-        {CATEGORIES.map((category, index) => (
+        {categories.map((category, index) => (
           <a
             key={index}
             href={`/blog/category/${category.name
@@ -418,7 +335,13 @@ const NewsletterWidget = () => {
 };
 
 // Related Articles Component
-const RelatedArticles = ({ currentPostId }: { currentPostId: string }) => {
+const RelatedArticles = ({
+  currentPostId,
+  posts,
+}: {
+  currentPostId: string;
+  posts: BlogPost[];
+}) => {
   const sectionRef = useRef(null);
   const headerRef = useRef(null);
   const cardsRef = useRef<(HTMLElement | null)[]>([]);
@@ -457,7 +380,7 @@ const RelatedArticles = ({ currentPostId }: { currentPostId: string }) => {
     return () => ctx.revert();
   }, []);
 
-  const relatedPosts = Object.values(BLOG_POSTS)
+  const relatedPosts = posts
     .filter((post) => post.id !== currentPostId)
     .slice(0, 3);
 
@@ -510,7 +433,9 @@ const RelatedArticles = ({ currentPostId }: { currentPostId: string }) => {
                   </a>
                 </h3>
                 <p className="text-gray-600 leading-relaxed mb-4">
-                  {post.summary.substring(0, 100)}...
+                  {(post.summary ||
+                    post.excerpt ||
+                    post.content.substring(0, 160)) + "..."}
                 </p>
                 <a
                   href={`/blog/${post.id}`}
@@ -540,8 +465,13 @@ const RelatedArticles = ({ currentPostId }: { currentPostId: string }) => {
 
 // Main Blog Detail Page Component
 export default function BlogDetailPage() {
-  const [postId] = useState("1"); // Default to first post for demo
-  const post = BLOG_POSTS[postId];
+  const params = useParams<{ id: string }>();
+  const postId = (params?.id as string) || "";
+
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   const summaryRef = useRef(null);
   const contentRef = useRef(null);
@@ -551,7 +481,35 @@ export default function BlogDetailPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+
+    const fetchData = async () => {
+      if (!postId) return;
+      try {
+        const [postRes, listRes] = await Promise.all([
+          fetch(`/api/blog/${postId}`),
+          fetch("/api/blog"),
+        ]);
+
+        if (postRes.status === 404) {
+          setNotFound(true);
+        } else if (postRes.ok) {
+          const data: BlogPost = await postRes.json();
+          setPost(data);
+        }
+
+        if (listRes.ok) {
+          const list: BlogPost[] = await listRes.json();
+          setAllPosts(list);
+        }
+      } catch (err) {
+        console.error("Error loading blog post:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [postId]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -619,7 +577,17 @@ export default function BlogDetailPage() {
     return () => ctx.revert();
   }, []);
 
-  if (!post) {
+  const categories = useMemo(() => buildCategories(allPosts), [allPosts]);
+
+  if (loading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <div className="text-xl">Loading...</div>
+      </main>
+    );
+  }
+
+  if (notFound || !post) {
     return (
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -656,7 +624,9 @@ export default function BlogDetailPage() {
                     Article Summary
                   </h3>
                   <p className="text-gray-600 leading-relaxed">
-                    {post.summary}
+                    {post.summary ||
+                      post.excerpt ||
+                      post.content.substring(0, 220)}
                   </p>
                 </div>
 
@@ -745,15 +715,15 @@ export default function BlogDetailPage() {
             {/* Sidebar */}
             <div className="lg:col-span-1">
               <AboutWidget />
-              <RecentPostsWidget currentPostId={postId} />
-              <CategoriesWidget />
+              <RecentPostsWidget currentPostId={postId} posts={allPosts} />
+              <CategoriesWidget categories={categories} />
               <NewsletterWidget />
             </div>
           </div>
         </div>
       </section>
 
-      <RelatedArticles currentPostId={postId} />
+      <RelatedArticles currentPostId={postId} posts={allPosts} />
     </main>
   );
 }

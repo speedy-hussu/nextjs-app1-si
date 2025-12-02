@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef,useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 import {
+  ChevronDown,
+  Info,
   History,
   Award,
   Target,
@@ -20,6 +23,7 @@ import {
   Shield,
   Globe,
   Star,
+  Mail,
 } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -28,15 +32,83 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
+interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+interface Testimonial {
+  initials: string;
+  name: string;
+  company: string;
+  text: string;
+  bgColor: string;
+  textColor: string;
+}
 
 export default function AboutPage() {
   const countersRef = useRef<HTMLDivElement[]>([]);
+  const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
   const heroRef = useRef(null);
   const storyRef = useRef(null);
   const missionRef = useRef(null);
   const valuesRef = useRef(null);
   const teamRef = useRef(null);
   const ctaRef = useRef(null);
+  const testimonialsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const faqSectionRef = useRef(null);
+
+  const faqItems: FAQItem[] = [
+    {
+      question: "How often will I receive the newsletter?",
+      answer:
+        "We send our main newsletter monthly, with occasional special editions for important market updates, new product launches, or exclusive offers. You'll typically receive 1-2 emails per month.",
+    },
+    {
+      question: "Can I unsubscribe at any time?",
+      answer:
+        "Absolutely! Every newsletter includes an unsubscribe link in the footer. You can also contact us directly to be removed from our mailing list. We process unsubscribe requests immediately.",
+    },
+    {
+      question: "What type of content do you share?",
+      answer:
+        "Our newsletter includes market trends, new product information, export regulations updates, pricing insights, success stories from our clients, and expert tips for agro product importers and distributors.",
+    },
+    {
+      question: "Is my email address safe with you?",
+      answer:
+        "Yes, we take your privacy seriously. We never share, sell, or rent your email address to third parties. Your information is stored securely and used only for sending our newsletter and relevant updates.",
+    },
+  ];
+
+  const testimonials: Testimonial[] = [
+    {
+      initials: "JD",
+      name: "John Davis",
+      company: "Food Imports USA",
+      text: "The market insights from Shivaay International's newsletter have been invaluable for our purchasing decisions. We've saved thousands by timing our orders based on their trend analysis.",
+      bgColor: "bg-blue-100",
+      textColor: "text-blue-600",
+    },
+    {
+      initials: "SM",
+      name: "Sarah Mohammed",
+      company: "Middle East Distributors",
+      text: "As a distributor in the Gulf region, staying updated on Indian agro exports is crucial. Their newsletter provides exactly the information we need to make informed decisions.",
+      bgColor: "bg-green-100",
+      textColor: "text-green-600",
+    },
+    {
+      initials: "MC",
+      name: "Michael Chen",
+      company: "Asia Pacific Foods",
+      text: "The quality standards and export guidelines shared in their newsletter have helped us maintain excellent relationships with our suppliers. Highly recommended for anyone in agro trade.",
+      bgColor: "bg-purple-100",
+      textColor: "text-purple-600",
+    },
+  ];
+
+
     useEffect(() => {
       // Scroll to top on mount
       window.scrollTo(0, 0);
@@ -297,8 +369,102 @@ export default function AboutPage() {
       countersRef.current.push(el);
     }
   };
+  // FAQ section animation
+  const toggleFAQ = (index: number) => {
+    setExpandedFAQ(expandedFAQ === index ? null : index);
+  };
+  
+  // FAQ section animation
+  useEffect(() => {
+    if (!faqSectionRef.current) return;
+  
+    const timer = setTimeout(() => {
+      const ctx = gsap.context(() => {
+        gsap.fromTo(
+          faqSectionRef.current,
+          {
+            opacity: 0,
+            y: 30,
+          },
+          {
+            scrollTrigger: {
+              trigger: faqSectionRef.current,
+              start: "top bottom-=100",
+              toggleActions: "play none none reverse",
+            },
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+          }
+        );
+  
+        // Animate individual FAQ items
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach((item, index) => {
+          gsap.fromTo(
+            item,
+            {
+              opacity: 0,
+              x: -20,
+            },
+            {
+              scrollTrigger: {
+                trigger: item,
+                start: "top bottom-=50",
+                toggleActions: "play none none reverse",
+              },
+              opacity: 1,
+              x: 0,
+              duration: 0.5,
+              delay: index * 0.1,
+              ease: "power2.out",
+            }
+          );
+        });
+      });
+  
+      return () => ctx.revert();
+    }, 200);
+  
+    return () => clearTimeout(timer);
+  }, []);
+// Testimonials animations
+useEffect(() => {
+  if (!testimonialsRef.current.length) return;
 
+  const timer = setTimeout(() => {
+    const ctx = gsap.context(() => {
+      testimonialsRef.current.forEach((card, index) => {
+        if (card) {
+          gsap.fromTo(card, 
+            {
+              opacity: 0,
+              y: 30,
+            },
+            {
+              scrollTrigger: {
+                trigger: card,
+                start: "top bottom-=100",
+                toggleActions: "play none none reverse",
+              },
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              delay: index * 0.1,
+              ease: "power2.out",
+            }
+          );
+        }
+      });
+    });
 
+    return () => ctx.revert();
+  }, 200);
+
+  return () => clearTimeout(timer);
+}, []);
+  
 
   return (
     <main className="min-h-screen">
@@ -697,6 +863,116 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+          {/* Testimonials Section */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center space-x-2 bg-green-100 text-green-600 rounded-full px-4 py-2 mb-4">
+              <Mail size={18} />
+              <span className="font-semibold">What Subscribers Say</span>
+            </div>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Trusted by Industry Professionals
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Hear from distributors and importers who rely on our newsletter
+              for valuable market insights.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, idx) => (
+              <div
+                key={idx}
+                ref={(el) => {
+                  testimonialsRef.current[idx] = el;
+                }}
+                className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300"
+              >
+                <div className="flex items-center space-x-4 mb-4">
+                  <div
+                    className={`w-12 h-12 ${testimonial.bgColor} rounded-full flex items-center justify-center`}
+                  >
+                    <span
+                      className={`${testimonial.textColor} font-bold text-sm`}
+                    >
+                      {testimonial.initials}
+                    </span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900">
+                      {testimonial.name}
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      {testimonial.company}
+                    </p>
+                  </div>
+                </div>
+                <p className="text-gray-600 leading-relaxed mb-4">
+                  {`"${testimonial.text}"`}
+                </p>
+                <div className="flex items-center space-x-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      size={16}
+                      className="text-yellow-400 fill-yellow-400"
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section ref={faqSectionRef} className="py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center space-x-2 bg-yellow-100 text-yellow-600 rounded-full px-4 py-2 mb-4">
+              <Info size={18} />
+              <span className="font-semibold">FAQ</span>
+            </div>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Everything you need to know about our newsletter subscription.
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            {faqItems.map((item, idx) => (
+              <div key={idx} className="bg-gray-50 rounded-2xl overflow-hidden">
+                <div
+                  className="p-6 text-lg font-semibold text-gray-900 flex items-center justify-between cursor-pointer hover:text-blue-600 transition-colors"
+                  onClick={() => toggleFAQ(idx)}
+                >
+                  <span>{item.question}</span>
+                  <ChevronDown
+                    size={20}
+                    className={`text-gray-400 transition-transform duration-300 ${
+                      expandedFAQ === idx ? "rotate-180" : ""
+                    }`}
+                  />
+                </div>
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                    expandedFAQ === idx
+                      ? "max-h-96 opacity-100"
+                      : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <div className="px-6 pb-6 text-gray-600 leading-relaxed">
+                    {item.answer}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* CTA Section */}
       <section ref={ctaRef} className="py-20 relative overflow-hidden">
@@ -718,18 +994,22 @@ export default function AboutPage() {
             Shivaay International difference in quality and service.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/contact">
             <button className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl text-lg group">
               <span className="flex items-center justify-center space-x-2">
                 <span>Get In Touch</span>
                 <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
               </span>
             </button>
+            </Link>
+            <Link href="/products">
             <button className="border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all duration-300 backdrop-blur-sm text-lg group">
               <span className="flex items-center justify-center space-x-2">
                 <span>View Products</span>
                 <Boxes className="transition-transform duration-300 group-hover:scale-110" />
               </span>
             </button>
+            </Link>
           </div>
         </div>
       </section>

@@ -6,7 +6,13 @@ const nextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "example.com",
+      },
     ],
+    // Allow local images from public/uploads
+    domains: [],
   },
 };
 

@@ -25,7 +25,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // 2. REGISTER PLUGIN GLOBALLY (outside the component)
 // This runs once during module loading on the client side.
-if (typeof window !== "undefined") {
+if (typeof window !== "undefined") {   
   gsap.registerPlugin(ScrollTrigger);
 }
 
@@ -38,108 +38,6 @@ interface Product {
   specifications: string;
   image?: string;
 }
-
-// Product data
-const PRODUCTS: Product[] = [
-  {
-    id: "1",
-    name: "Premium Basmati Rice",
-    category: "rice",
-    description:
-      "Aromatic long-grain rice known for its distinctive fragrance and exquisite flavor. Perfect for international markets and premium culinary applications.",
-    specifications:
-      "Extra long grain, aromatic, non-sticky texture, aged for superior quality",
-    image:
-      "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800&q=80",
-  },
-  {
-    id: "2",
-    name: "Quality Wheat Grains",
-    category: "wheat",
-    description:
-      "High-protein wheat grains suitable for various culinary applications. Sourced from trusted farmers with rigorous quality control.",
-    specifications:
-      "High protein content, low moisture, uniform grain size, excellent milling quality",
-    image:
-      "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800&q=80",
-  },
-  {
-    id: "3",
-    name: "Organic Turmeric Powder",
-    category: "spices",
-    description:
-      "Pure organic turmeric with rich golden color and earthy aroma. Processed under strict quality control to preserve natural properties.",
-    specifications:
-      "100% organic, high curcumin content, vibrant color, no artificial additives",
-    image:
-      "https://images.unsplash.com/photo-1615485500834-bc10199bc768?w=800&q=80",
-  },
-  {
-    id: "4",
-    name: "Premium Red Lentils",
-    category: "pulses",
-    description:
-      "High-quality red lentils with excellent nutritional value. Carefully processed and packed to maintain freshness and quality.",
-    specifications:
-      "High protein, uniform size, clean processing, excellent cooking quality",
-    image:
-      "https://images.unsplash.com/photo-1610640964704-d0e9924f4e2d?w=800&q=80",
-  },
-  {
-    id: "5",
-    name: "Sona Masoori Rice",
-    category: "rice",
-    description:
-      "Medium-grain aromatic rice, lightweight and low in starch. Ideal for everyday cooking and popular in international markets.",
-    specifications: "Medium grain, aromatic, low starch content, quick cooking",
-    image:
-      "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800&q=80",
-  },
-  {
-    id: "6",
-    name: "Red Chili Powder",
-    category: "spices",
-    description:
-      "Premium quality red chili powder with perfect heat and vibrant color. Sourced from the finest chilies and ground to perfection.",
-    specifications:
-      "High heat level, rich red color, pure and natural, no additives",
-    image:
-      "https://images.unsplash.com/photo-1583032015627-7a5c8e80114b?w=800&q=80",
-  },
-  {
-    id: "7",
-    name: "Whole Wheat Flour",
-    category: "wheat",
-    description:
-      "Finely milled whole wheat flour rich in fiber and nutrients. Perfect for making traditional breads and healthy baked goods.",
-    specifications:
-      "100% whole grain, high fiber, fine texture, natural nutrients",
-    image:
-      "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80",
-  },
-  {
-    id: "8",
-    name: "Yellow Split Peas",
-    category: "pulses",
-    description:
-      "Premium quality yellow split peas, rich in protein and perfect for soups and traditional dishes.",
-    specifications:
-      "Split and cleaned, high protein, uniform size, quick cooking",
-    image:
-      "https://images.unsplash.com/photo-1595855759920-86582396756a?w=800&q=80",
-  },
-  {
-    id: "9",
-    name: "Coriander Powder",
-    category: "spices",
-    description:
-      "Aromatic coriander powder with a fresh, citrusy flavor. Essential spice for various cuisines worldwide.",
-    specifications:
-      "Fresh aroma, fine powder, natural processing, preservative-free",
-    image:
-      "https://images.unsplash.com/photo-1599909533026-8f1960238449?w=800&q=80",
-  },
-];
 
 // Category color config (Using Lucide components)
 const categoryColors = {
@@ -283,14 +181,16 @@ const ProductCard = ({ product }: { product: Product }) => {
           {product.description}
         </p>
 
-        {product.specifications && (
+{/* dont put in products put in detail page */}
+
+        {/* {product.specifications && (
           <div className="mb-4">
             <h4 className="font-semibold text-gray-800 mb-2 text-sm">
               Key Specifications:
             </h4>
             <p className="text-sm text-gray-600">{product.specifications}</p>
           </div>
-        )}
+        )} */}
 
         <div className="flex items-center justify-between">
           <Link
@@ -354,7 +254,35 @@ const FilterButtons = ({
 export default function ProductsPage() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const scope = useRef(null); // Ref for the main container
+
+  // Fetch products from API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetch("/api/products");
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch products");
+        }
+        
+        const data = await response.json();
+        setProducts(data);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setError(err instanceof Error ? err.message : "Failed to load products");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     // GSAP Context for Scoped Animations and Automatic Cleanup
@@ -395,10 +323,10 @@ export default function ProductsPage() {
 
     // Cleanup function for the context, which automatically reverts all GSAP changes
     return () => ctx.revert();
-  }, [activeFilter, searchTerm]); // Re-run effect when filters/search change to animate new items
+  }, [activeFilter, searchTerm, products]); // Re-run effect when filters/search/products change to animate new items
 
   const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter((product) => {
+    return products.filter((product) => {
       const matchesFilter =
         activeFilter === "all" || product.category === activeFilter;
       const matchesSearch =
@@ -407,7 +335,7 @@ export default function ProductsPage() {
         product.description.toLowerCase().includes(searchTerm.toLowerCase());
       return matchesFilter && matchesSearch;
     });
-  }, [activeFilter, searchTerm]);
+  }, [activeFilter, searchTerm, products]);
 
   return (
     <main ref={scope} className="min-h-screen bg-gray-50">
@@ -434,7 +362,28 @@ export default function ProductsPage() {
             </div>
           </div>
 
-          {filteredProducts.length > 0 ? (
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading products...</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <div className="bg-red-50 rounded-2xl p-8 max-w-md mx-auto">
+                <Search className="text-red-400 w-12 h-12 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Error Loading Products
+                </h3>
+                <p className="text-gray-600 mb-4">{error}</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+                >
+                  Try Again
+                </button>
+              </div>
+            </div>
+          ) : filteredProducts.length > 0 ? (
             // Added products-grid class for GSAP targeting
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 products-grid">
               {filteredProducts.map((product) => (
@@ -449,7 +398,9 @@ export default function ProductsPage() {
                   No Products Found
                 </h3>
                 <p className="text-gray-600">
-                  Try adjusting your search or filter criteria
+                  {products.length === 0
+                    ? "No products available at the moment"
+                    : "Try adjusting your search or filter criteria"}
                 </p>
               </div>
             </div>
@@ -563,5 +514,3 @@ export default function ProductsPage() {
   );
 }
 
-// Export product data for use in detail page
-export { PRODUCTS };
