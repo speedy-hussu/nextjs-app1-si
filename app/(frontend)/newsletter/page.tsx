@@ -24,8 +24,6 @@ interface Message {
   type: "success" | "error" | "info" | "";
 }
 
-
-
 const NewsletterPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState<Message>({ text: "", type: "" });
@@ -44,10 +42,8 @@ const NewsletterPage: React.FC = () => {
   const formSectionRef = useRef(null);
   const benefitsSectionRef = useRef(null);
   const benefitItemsRef = useRef<(HTMLDivElement | null)[]>([]);
-  
-  const ctaSectionRef = useRef(null);
 
- 
+  const ctaSectionRef = useRef(null);
 
   // Hero animations
   useEffect(() => {
@@ -127,9 +123,6 @@ const NewsletterPage: React.FC = () => {
 
     return () => ctx.revert();
   }, []);
-
-
-
 
   // CTA section animation
   useEffect(() => {
@@ -219,19 +212,17 @@ const NewsletterPage: React.FC = () => {
     }
   };
 
-
-
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section
         ref={heroRef}
-        className="relative pt-32 pb-20 overflow-hidden bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700"
+        className="relative pt-32 pb-20 overflow-hidden bg-gradient-to-br from-[rgb(var(--color-primary-800))] to-[rgb(var(--color-primary-900))]"
       >
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-[rgb(var(--color-primary-400))]/10 rounded-full blur-3xl floating"></div>
           <div
-            className="absolute -bottom-40 -left-40 w-80 h-80 bg-green-400/10 rounded-full blur-3xl animate-pulse"
+            className="absolute -bottom-40 -left-40 w-80 h-80 bg-[rgb(var(--color-primary-300))]/10 rounded-full blur-3xl floating"
             style={{ animationDelay: "2s" }}
           ></div>
         </div>
@@ -241,7 +232,7 @@ const NewsletterPage: React.FC = () => {
             ref={heroBadgeRef}
             className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6"
           >
-            <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+            <span className="w-2 h-2 bg-[rgb(var(--color-primary-300))] rounded-full"></span>
             <span className="text-sm font-medium text-white">
               Stay Informed
             </span>
@@ -252,14 +243,14 @@ const NewsletterPage: React.FC = () => {
             className="text-5xl lg:text-6xl font-bold mb-6 leading-tight"
           >
             <span className="text-white">Stay Updated with</span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 block">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[rgb(var(--color-primary-300))] to-[rgb(var(--color-primary-500))] block">
               Our Newsletter
             </span>
           </h1>
 
           <p
             ref={heroDescRef}
-            className="text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto"
+            className="text-xl text-white/90 leading-relaxed max-w-3xl mx-auto"
           >
             Get the latest insights, market trends, and exclusive updates from
             Shivaay International delivered directly to your inbox.
@@ -273,7 +264,7 @@ const NewsletterPage: React.FC = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Subscription Form */}
             <div ref={formSectionRef} className="newsletter-content">
-              <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-600 rounded-full px-4 py-2 mb-6">
+              <div className="inline-flex items-center space-x-2 bg-[rgb(var(--color-primary-50))] text-[rgb(var(--color-primary-700))] rounded-full px-4 py-2 mb-6">
                 <Mail size={18} />
                 <span className="font-semibold">Subscribe Now</span>
               </div>
@@ -324,14 +315,14 @@ const NewsletterPage: React.FC = () => {
                     placeholder="your.email@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-6 py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition-all duration-300"
+                    className="w-full px-6 py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary-500))] focus:border-transparent shadow-sm transition-all duration-300"
                   />
                 </div>
 
                 <button
                   onClick={handleSubmit}
                   disabled={isLoading}
-                  className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-3 group disabled:opacity-70"
+                  className="w-full bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white py-4 rounded-xl font-semibold hover:from-[rgb(var(--color-primary-600))] hover:to-[rgb(var(--color-primary-800))] transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-3 group disabled:opacity-70"
                 >
                   <span>
                     {isLoading ? "Subscribing..." : "Subscribe to Newsletter"}
@@ -342,7 +333,7 @@ const NewsletterPage: React.FC = () => {
                   We respect your privacy. Unsubscribe at any time. Read our
                   <a
                     href="#"
-                    className="text-blue-600 hover:text-blue-700 font-semibold"
+                    className="text-[rgb(var(--color-primary-700))] hover:text-[rgb(var(--color-primary-800))] font-semibold"
                   >
                     {" "}
                     Privacy Policy
@@ -355,7 +346,7 @@ const NewsletterPage: React.FC = () => {
             {/* Benefits Section */}
             <div
               ref={benefitsSectionRef}
-              className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-8"
+              className="bg-gradient-to-br from-[rgb(var(--color-primary-50))] to-[rgb(var(--color-primary-100))] rounded-2xl p-8 border border-[rgb(var(--color-primary-100))]"
             >
               <h3 className="text-2xl font-bold text-gray-900 mb-6">
                 What You'll Receive
@@ -369,8 +360,11 @@ const NewsletterPage: React.FC = () => {
                   }}
                   className="flex items-start space-x-4 benefit-item"
                 >
-                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <TrendingUp className="text-blue-600" size={24} />
+                  <div className="w-12 h-12 bg-[rgb(var(--color-primary-50))] rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[rgb(var(--color-primary-100))] transition-colors duration-300">
+                    <TrendingUp
+                      className="text-[rgb(var(--color-primary-700))]"
+                      size={24}
+                    />
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-900 mb-2">
@@ -390,8 +384,11 @@ const NewsletterPage: React.FC = () => {
                   }}
                   className="flex items-start space-x-4 benefit-item"
                 >
-                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Package className="text-green-600" size={24} />
+                  <div className="w-12 h-12 bg-[rgb(var(--color-primary-50))] rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[rgb(var(--color-primary-100))] transition-colors duration-300">
+                    <Package
+                      className="text-[rgb(var(--color-primary-700))]"
+                      size={24}
+                    />
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-900 mb-2">
@@ -411,8 +408,11 @@ const NewsletterPage: React.FC = () => {
                   }}
                   className="flex items-start space-x-4 benefit-item"
                 >
-                  <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Tag className="text-purple-600" size={24} />
+                  <div className="w-12 h-12 bg-[rgb(var(--color-primary-50))] rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-[rgb(var(--color-primary-100))] transition-colors duration-300">
+                    <Tag
+                      className="text-[rgb(var(--color-primary-700))]"
+                      size={24}
+                    />
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-900 mb-2">
@@ -475,20 +475,18 @@ const NewsletterPage: React.FC = () => {
         </div>
       </section>
 
-  
-
       {/* Final CTA Section */}
       <section
         ref={ctaSectionRef}
-        className="py-20 relative overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800"
+        className="py-20 relative overflow-hidden bg-neutral-100"
       >
-        <div className="absolute inset-0 bg-opacity-10 bg-black"></div>
+        <div className="absolute inset-0 bg-white/10"></div>
 
         <div className="relative max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+          <h2 className="text-4xl lg:text-5xl font-bold text-primary-900 mb-6">
             Ready to Stay Informed?
           </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-primary-700 mb-8 max-w-2xl mx-auto leading-relaxed">
             Join thousands of industry professionals who rely on our insights
             for their business success.
           </p>
@@ -498,17 +496,17 @@ const NewsletterPage: React.FC = () => {
                 const element = document.getElementById("email");
                 element?.scrollIntoView({ behavior: "smooth" });
               }}
-              className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl text-lg flex items-center justify-center space-x-2 group"
+              className="bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white px-8 py-4 rounded-xl font-semibold hover:from-[rgb(var(--color-primary-600))] hover:to-[rgb(var(--color-primary-800))] transition-all duration-300 shadow-lg hover:shadow-xl text-lg flex items-center justify-center space-x-2 group"
             >
               <span>Subscribe Now</span>
               <ArrowDown
                 size={20}
-                className="group-hover:translate-y-1 transition-transform duration-300"
+                className="group-hover:translate-y-1 transition-transform duration-300 text-white"
               />
             </button>
             <a
               href="/contact"
-              className="border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all duration-300 backdrop-blur-sm text-lg flex items-center justify-center space-x-2 group"
+              className="border-2 border-[rgb(var(--color-primary-700))] text-[rgb(var(--color-primary-700))] px-8 py-4 rounded-xl font-semibold hover:bg-[rgb(var(--color-primary-50))] transition-all duration-300 text-lg flex items-center justify-center space-x-2 group"
             >
               <span>Contact Us</span>
               <Mail

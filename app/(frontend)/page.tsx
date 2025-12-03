@@ -545,7 +545,7 @@ export default function page() {
           </div>
 
           <div className="text-center mt-12">
-            <button className="inline-flex items-center space-x-3 bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl group">
+            <button className="inline-flex items-center space-x-3 bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white px-8 py-4 rounded-xl font-semibold hover:from-[rgb(var(--color-primary-600))] hover:to-[rgb(var(--color-primary-800))] transition-all duration-300 shadow-lg hover:shadow-xl group">
               <span>View All Products</span>
               <ArrowRight
                 size={20}
@@ -557,10 +557,10 @@ export default function page() {
       </section>
 
       {/* CTA Section */}
-      <section ref={ctaRef} className="py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0e2c52] to-[#1a3a66]"></div>
+      <section ref={ctaRef} className="py-20 relative overflow-hidden bg-white">
+        <div className="absolute inset-0 bg-white"></div>
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-10"
+          className="absolute inset-0 bg-cover bg-center opacity-5"
           style={{
             backgroundImage:
               "url('https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?auto=format&fit=crop&w=2128&q=80')",
@@ -568,25 +568,25 @@ export default function page() {
         ></div>
 
         <div className="cta-content relative max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+          <h2 className="text-4xl lg:text-5xl font-bold text-[rgb(var(--color-primary-900))] mb-6">
             Ready to Grow Your Business?
           </h2>
-          <p className="text-xl text-neutral-300 mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-[rgb(var(--color-gray-700))] mb-8 max-w-2xl mx-auto leading-relaxed">
             Partner with Shivaay International and experience the difference in
             quality, reliability, and service. Join our global family of
             satisfied distributors today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-[#0e2c52] px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl text-lg group">
+            <button className="bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white px-8 py-4 rounded-xl font-semibold hover:from-[rgb(var(--color-primary-600))] hover:to-[rgb(var(--color-primary-800))] transition-all duration-300 shadow-lg hover:shadow-xl text-lg group">
               <span className="flex items-center justify-center space-x-2">
                 <span>Start Partnership</span>
                 <Handshake
                   size={20}
-                  className="group-hover:scale-110 transition-transform duration-300"
+                  className="group-hover:translate-x-1 transition-transform duration-300"
                 />
               </span>
             </button>
-            <button className="border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all duration-300 backdrop-blur-sm text-lg group">
+            <button className="border-2 border-[rgb(var(--color-primary-900))] text-[rgb(var(--color-primary-900))] px-8 py-4 rounded-xl font-semibold hover:bg-[rgb(var(--color-primary-50))] transition-all duration-300 text-lg group">
               <span className="flex items-center justify-center space-x-2">
                 <span>Call Now</span>
                 <Phone

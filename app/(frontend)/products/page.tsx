@@ -10,24 +10,32 @@ import {
   Phone,
   Package,
   Sprout,
-  Wheat, // For Wheat Grains
-  Feather, // For Rice (like a grain/lightness)
-  Sparkles, // For Spices
-  HeartHandshake, // For Pulses (symbolizing nourishment)
-  Globe, // Replacing 🌍
-  CheckCircle, // Replacing ✓
-  Truck, // Replacing 🚚
+  Wheat,
+  Feather,
+  Sparkles,
+  HeartHandshake,
+  Globe,
+  CheckCircle,
+  Truck,
 } from "lucide-react";
 
 // 1. IMPORT GSAP & SCROLLTRIGGER
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// 2. REGISTER PLUGIN GLOBALLY (outside the component)
-// This runs once during module loading on the client side.
-if (typeof window !== "undefined") {   
+// 2. REGISTER PLUGIN GLOBALLY
+if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
+
+// --- THEME CONFIGURATION ---
+const PRIMARY_COLOR_NAME = "primary";
+const PRIMARY_GRADIENT = `from-primary-700 to-primary-900`;
+const PRIMARY_ACCENT_CLASS = `text-primary-600`;
+const PRIMARY_BG_CLASS = `bg-primary-600`;
+const PRIMARY_HOVER_BG_CLASS = `hover:bg-primary-700`;
+const PRIMARY_BG_LIGHT_CLASS = `bg-primary-100`;
+const PRIMARY_TEXT_LIGHT_CLASS = `text-primary-100`;
 
 // Product type
 interface Product {
@@ -39,31 +47,31 @@ interface Product {
   image?: string;
 }
 
-// Category color config (Using Lucide components)
+// Category color config
 const categoryColors = {
   rice: {
     gradient: "from-amber-400 to-amber-600",
     text: "text-amber-600",
     bg: "bg-amber-100",
-    icon: Feather, // Light, long grain feeling
+    icon: Feather,
   },
   wheat: {
     gradient: "from-yellow-400 to-yellow-600",
     text: "text-yellow-600",
     bg: "bg-yellow-100",
-    icon: Wheat, // Direct representation
+    icon: Wheat,
   },
   spices: {
     gradient: "from-red-400 to-red-600",
     text: "text-red-600",
     bg: "bg-red-100",
-    icon: Sparkles, // Vibrant, attractive symbol
+    icon: Sparkles,
   },
   pulses: {
     gradient: "from-green-400 to-green-600",
     text: "text-green-600",
     bg: "bg-green-100",
-    icon: HeartHandshake, // Healthy, nourishing, supportive
+    icon: HeartHandshake,
   },
 };
 
@@ -73,7 +81,6 @@ const HeroSection = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Hero Section Text Animation
       gsap.from(heroRef.current, {
         y: -50,
         opacity: 0,
@@ -82,7 +89,6 @@ const HeroSection = () => {
         delay: 0.2,
       });
 
-      // Background floating animation
       gsap.to(".floating", {
         y: "+=20",
         rotation: 1,
@@ -97,11 +103,13 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="pt-32 pb-20 bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden">
+    <section
+      className={`pt-32 pb-20 bg-gradient-to-br ${PRIMARY_GRADIENT} relative overflow-hidden`}
+    >
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl floating"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[rgb(var(--color-primary-400))]/10 rounded-full blur-3xl floating"></div>
         <div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-green-400/10 rounded-full blur-3xl floating"
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-[rgb(var(--color-primary-300))]/10 rounded-full blur-3xl floating"
           style={{ animationDelay: "2s" }}
         ></div>
       </div>
@@ -111,7 +119,7 @@ const HeroSection = () => {
         className="relative max-w-7xl mx-auto px-6 text-center"
       >
         <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-          <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+          <span className="w-2 h-2 bg-[rgb(var(--color-primary-300))] rounded-full"></span>
           <span className="text-sm font-medium text-white">
             Premium Agro Products
           </span>
@@ -119,12 +127,14 @@ const HeroSection = () => {
 
         <h1 className="text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
           Our Premium
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 block">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[rgb(var(--color-primary-200))] to-[rgb(var(--color-primary-400))] block">
             Product Range
           </span>
         </h1>
 
-        <p className="text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto">
+        <p
+          className={`text-xl ${PRIMARY_TEXT_LIGHT_CLASS} leading-relaxed max-w-3xl mx-auto`}
+        >
           Discover our extensive range of high-quality agricultural products,
           carefully sourced and exported to meet international standards and
           customer expectations worldwide.
@@ -156,12 +166,11 @@ const ProductCard = ({ product }: { product: Product }) => {
           </div>
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            {/* Use the Lucide Icon component */}
             <IconComponent className="w-16 h-16 opacity-50 text-white" />
           </div>
         )}
 
-        <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
+        <div className="absolute top-4 right-4 bg-white/30 backdrop-blur-sm rounded-full px-3 py-1 border border-white/20">
           <span className="text-white text-sm font-semibold">Premium</span>
         </div>
       </div>
@@ -181,17 +190,6 @@ const ProductCard = ({ product }: { product: Product }) => {
           {product.description}
         </p>
 
-{/* dont put in products put in detail page */}
-
-        {/* {product.specifications && (
-          <div className="mb-4">
-            <h4 className="font-semibold text-gray-800 mb-2 text-sm">
-              Key Specifications:
-            </h4>
-            <p className="text-sm text-gray-600">{product.specifications}</p>
-          </div>
-        )} */}
-
         <div className="flex items-center justify-between">
           <Link
             href={`/products/${product.id}`}
@@ -203,7 +201,7 @@ const ProductCard = ({ product }: { product: Product }) => {
 
           <Link
             href={`/contact?product=${encodeURIComponent(product.name)}`}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-300 text-sm font-semibold"
+            className="bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white px-4 py-2 rounded-lg hover:from-[rgb(var(--color-primary-600))] hover:to-[rgb(var(--color-primary-800))] transition-all duration-300 text-sm font-semibold shadow-md hover:shadow-lg"
           >
             Enquire Now
           </Link>
@@ -231,21 +229,19 @@ const FilterButtons = ({
 
   return (
     <div className="inline-flex flex-wrap justify-center gap-4 mb-8">
-           {" "}
       {filters.map((filter) => (
         <button
           key={filter.value}
           onClick={() => onFilterChange(filter.value)}
           className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
             activeFilter === filter.value
-              ? "bg-blue-600 text-white shadow-lg"
-              : "bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-600"
+              ? "bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white shadow-lg"
+              : "bg-gray-100 text-gray-700 hover:bg-[rgb(var(--color-primary-50))] hover:text-[rgb(var(--color-primary-700))] border border-transparent hover:border-[rgb(var(--color-primary-100))]"
           }`}
         >
-                    {filter.label}       {" "}
+          {filter.label}
         </button>
       ))}
-         {" "}
     </div>
   );
 };
@@ -257,25 +253,27 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const scope = useRef(null); // Ref for the main container
+  const scope = useRef(null);
 
-  // Fetch products from API
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         setError(null);
         const response = await fetch("/api/products");
-        
+
         if (!response.ok) {
           throw new Error("Failed to fetch products");
         }
-        
+
         const data = await response.json();
         setProducts(data);
       } catch (err) {
         console.error("Error fetching products:", err);
-        setError(err instanceof Error ? err.message : "Failed to load products");
+        setError(
+          err instanceof Error ? err.message : "Failed to load products"
+        );
       } finally {
         setLoading(false);
       }
@@ -283,48 +281,6 @@ export default function ProductsPage() {
 
     fetchProducts();
   }, []);
-
-  useEffect(() => {
-    // GSAP Context for Scoped Animations and Automatic Cleanup
-    const ctx = gsap.context(() => {
-      // Kill existing ScrollTriggers before creating new ones (important for state changes)
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-
-      // Product cards animation on scroll
-      gsap.from(".product-card", {
-        scrollTrigger: {
-          trigger: ".products-grid", // Use the grid container as the trigger
-          start: "top 80%", // Start animation when the grid is 80% from the top
-          toggleActions: "play none none reverse",
-        },
-        duration: 0.8,
-        y: 50,
-        opacity: 0,
-        stagger: 0.15, // Stagger the animation of each card
-        ease: "power3.out",
-      });
-
-      // Why Choose section animation
-      gsap.from(".why-choose-item", {
-        scrollTrigger: {
-          trigger: ".why-choose-grid",
-          start: "top 80%",
-          toggleActions: "play none none reverse",
-        },
-        y: 30,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.2,
-      });
-
-      // Crucial for Next.js/React: Recalculate ScrollTrigger positions
-      ScrollTrigger.refresh();
-    }, scope); // <- Scope the animations to the ref
-
-    // Cleanup function for the context, which automatically reverts all GSAP changes
-    return () => ctx.revert();
-  }, [activeFilter, searchTerm, products]); // Re-run effect when filters/search/products change to animate new items
-
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       const matchesFilter =
@@ -336,6 +292,55 @@ export default function ProductsPage() {
       return matchesFilter && matchesSearch;
     });
   }, [activeFilter, searchTerm, products]);
+
+  // GSAP Animations - Fixed to work with React VDOM
+  // useEffect(() => {
+  //   // Only run animations if products are loaded and there are filtered products
+  //   if (loading || filteredProducts.length === 0) return;
+
+  //   const ctx = gsap.context(() => {
+  //     ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+
+  //     // Small delay to ensure DOM is fully rendered
+  //     gsap.delayedCall(0.1, () => {
+  //       const cards = document.querySelectorAll(".product-card");
+  //       const whyChooseItems = document.querySelectorAll(".why-choose-item");
+
+  //       if (cards.length > 0) {
+  //         gsap.from(cards, {
+  //           scrollTrigger: {
+  //             trigger: ".products-grid",
+  //             start: "top 80%",
+  //             toggleActions: "play none none reverse",
+  //           },
+  //           duration: 0.8,
+  //           y: 50,
+  //           opacity: 0,
+  //           stagger: 0.15,
+  //           ease: "power3.out",
+  //         });
+  //       }
+
+  //       if (whyChooseItems.length > 0) {
+  //         gsap.from(whyChooseItems, {
+  //           scrollTrigger: {
+  //             trigger: ".why-choose-grid",
+  //             start: "top 80%",
+  //             toggleActions: "play none none reverse",
+  //           },
+  //           y: 30,
+  //           opacity: 0,
+  //           duration: 0.6,
+  //           stagger: 0.2,
+  //         });
+  //       }
+
+  //       ScrollTrigger.refresh();
+  //     });
+  //   }, scope);
+
+  //   return () => ctx.revert();
+  // }, [loading, filteredProducts]);
 
   return (
     <main ref={scope} className="min-h-screen bg-gray-50">
@@ -356,7 +361,7 @@ export default function ProductsPage() {
                 placeholder="Search products..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-6 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                className="w-full px-6 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary-500))] focus:border-transparent shadow-sm transition-all duration-300"
               />
               <Search className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             </div>
@@ -364,7 +369,9 @@ export default function ProductsPage() {
 
           {loading ? (
             <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <div
+                className={`animate-spin rounded-full h-16 w-16 border-b-2 border-primary-600 mx-auto mb-4`}
+              ></div>
               <p className="text-gray-600">Loading products...</p>
             </div>
           ) : error ? (
@@ -377,14 +384,13 @@ export default function ProductsPage() {
                 <p className="text-gray-600 mb-4">{error}</p>
                 <button
                   onClick={() => window.location.reload()}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+                  className="bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white px-6 py-2 rounded-lg hover:from-[rgb(var(--color-primary-600))] hover:to-[rgb(var(--color-primary-800))] transition-all duration-300 shadow-md hover:shadow-lg"
                 >
                   Try Again
                 </button>
               </div>
             </div>
           ) : filteredProducts.length > 0 ? (
-            // Added products-grid class for GSAP targeting
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 products-grid">
               {filteredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
@@ -409,10 +415,10 @@ export default function ProductsPage() {
       </section>
 
       {/* Why Choose Section */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+      <section className={`py-20 bg-gradient-to-br from-gray-50 to-primary-50`}>
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center space-x-2 bg-purple-100 text-purple-600 rounded-full px-4 py-2 mb-4">
+            <div className="inline-flex items-center space-x-2 bg-primary-100 text-primary-600 rounded-full px-4 py-2 mb-4">
               <Sprout size={18} />
               <span className="font-semibold">Why Choose Us</span>
             </div>
@@ -425,11 +431,12 @@ export default function ProductsPage() {
             </p>
           </div>
 
-          {/* Added why-choose-grid class for GSAP targeting */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 why-choose-grid">
             <div className="text-center why-choose-item">
-              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Package className="text-blue-600" size={32} />
+              <div
+                className={`w-16 h-16 ${PRIMARY_BG_LIGHT_CLASS} rounded-2xl flex items-center justify-center mx-auto mb-4`}
+              >
+                <Package className={PRIMARY_ACCENT_CLASS} size={32} />
               </div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">
                 Premium Quality
@@ -484,13 +491,14 @@ export default function ProductsPage() {
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
             We source a wide variety of agro products. Contact us with your
-            specific requirements, and we&apos;ll help you find the perfect solution.
+            specific requirements, and we&apos;ll help you find the perfect
+            solution.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/contact"
-              className="bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl text-lg group"
+              className="bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white shadow-lg text-white px-8 py-4 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl text-lg group"
             >
               <span className="flex items-center justify-center space-x-2">
                 <span>Custom Enquiry</span>
@@ -500,7 +508,7 @@ export default function ProductsPage() {
 
             <a
               href="tel:+1234567890"
-              className="border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-600 hover:text-white transition-all duration-300 text-lg group"
+              className={`border-2 border-primary-600 ${PRIMARY_ACCENT_CLASS} px-8 py-4 rounded-xl font-semibold hover:bg-primary-600 hover:text-white transition-all duration-300 text-lg group`}
             >
               <span className="flex items-center justify-center space-x-2">
                 <span>Call Our Experts</span>
@@ -513,4 +521,3 @@ export default function ProductsPage() {
     </main>
   );
 }
-

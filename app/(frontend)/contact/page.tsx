@@ -79,12 +79,12 @@ const HeroSection = () => {
   return (
     <section
       ref={heroRef}
-      className="pt-32 pb-20 bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden"
+      className="pt-32 pb-20 bg-gradient-to-br from-[rgb(var(--color-primary-800))] to-[rgb(var(--color-primary-900))] relative overflow-hidden"
     >
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[rgb(var(--color-primary-400))]/10 rounded-full blur-3xl floating"></div>
         <div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-green-400/10 rounded-full blur-3xl animate-pulse"
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-[rgb(var(--color-primary-300))]/10 rounded-full blur-3xl floating"
           style={{ animationDelay: "2s" }}
         ></div>
       </div>
@@ -92,9 +92,9 @@ const HeroSection = () => {
       <div className="relative max-w-7xl mx-auto px-6 text-center z-20">
         <div
           ref={badgeRef}
-          className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6"
+          className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6 border border-white/20"
         >
-          <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+          <span className="w-2 h-2 bg-[rgb(var(--color-primary-300))] rounded-full"></span>
           <span className="text-sm font-medium text-white">Get In Touch</span>
         </div>
 
@@ -103,14 +103,14 @@ const HeroSection = () => {
           className="text-5xl lg:text-6xl font-bold mb-6 leading-tight"
         >
           <span className="text-white">Contact Shivaay</span>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 block">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[rgb(var(--color-primary-300))] to-[rgb(var(--color-primary-500))] block">
             International
           </span>
         </h1>
 
         <p
           ref={descRef}
-          className="text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto"
+          className="text-xl text-white/90 leading-relaxed max-w-3xl mx-auto"
         >
           Ready to partner with us? Get in touch with our export specialists for
           premium agro products, competitive pricing, and reliable global
@@ -162,7 +162,7 @@ const ContactInfo = () => {
 
   return (
     <div ref={infoRef} className="contact-info">
-      <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-600 rounded-full px-4 py-2 mb-6">
+      <div className="inline-flex items-center space-x-2 bg-[rgb(var(--color-primary-50))] text-[rgb(var(--color-primary-700))] rounded-full px-4 py-2 mb-6">
         <MapPin size={18} />
         <span className="font-semibold">Our Office</span>
       </div>
@@ -184,8 +184,8 @@ const ContactInfo = () => {
           }}
           className="flex items-start space-x-4"
         >
-          <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-            <Phone className="text-blue-600" size={20} />
+          <div className="w-12 h-12 bg-[rgb(var(--color-primary-50))] rounded-xl flex items-center justify-center flex-shrink-0">
+            <Phone className="text-[rgb(var(--color-primary-600))]" size={20} />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-1">Phone</h3>
@@ -408,7 +408,7 @@ const ContactForm = ({ productQuery }: { productQuery: string | null }) => {
               placeholder="Your full name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary-500))] focus:border-transparent transition-all duration-300"
             />
           </div>
 
@@ -427,7 +427,7 @@ const ContactForm = ({ productQuery }: { productQuery: string | null }) => {
               placeholder="your.email@example.com"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary-500))] focus:border-transparent transition-all duration-300"
             />
           </div>
         </div>
@@ -447,7 +447,7 @@ const ContactForm = ({ productQuery }: { productQuery: string | null }) => {
               placeholder="+1 (555) 123-4567"
               value={formData.phone}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary-500))] focus:border-transparent transition-all duration-300"
             />
           </div>
 
@@ -465,7 +465,7 @@ const ContactForm = ({ productQuery }: { productQuery: string | null }) => {
               placeholder="Your company name"
               value={formData.company}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary-500))] focus:border-transparent transition-all duration-300"
             />
           </div>
         </div>
@@ -533,7 +533,7 @@ const ContactForm = ({ productQuery }: { productQuery: string | null }) => {
         <button
           onClick={handleSubmit}
           disabled={isSubmitting}
-          className="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-3 group disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-6 py-4 bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white rounded-xl font-semibold hover:from-[rgb(var(--color-primary-600))] hover:to-[rgb(var(--color-primary-800))] transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl group disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span>{isSubmitting ? "Sending..." : "Send Message"}</span>
           <Send

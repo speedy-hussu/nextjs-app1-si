@@ -89,12 +89,12 @@ const HeroSection = ({ post }: { post: BlogPost }) => {
   return (
     <section
       ref={heroRef}
-      className="pt-32 pb-20 bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden"
+      className="pt-32 pb-20 bg-gradient-to-br from-[rgb(var(--color-primary-800))] to-[rgb(var(--color-primary-900))] relative overflow-hidden"
     >
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[rgb(var(--color-primary-400))]/10 rounded-full blur-3xl floating"></div>
         <div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-green-400/10 rounded-full blur-3xl animate-pulse"
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-[rgb(var(--color-primary-300))]/10 rounded-full blur-3xl floating"
           style={{ animationDelay: "2s" }}
         ></div>
       </div>
@@ -104,7 +104,7 @@ const HeroSection = ({ post }: { post: BlogPost }) => {
           ref={badgeRef}
           className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6"
         >
-          <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+          <span className="w-2 h-2 bg-[rgb(var(--color-primary-300))] rounded-full"></span>
           <span className="text-sm font-medium text-white">Blog Article</span>
         </div>
 
@@ -175,7 +175,7 @@ const AboutWidget = () => {
       </p>
       <a
         href="/about"
-        className="text-blue-600 hover:text-blue-700 font-semibold text-sm"
+        className="text-primary-600 hover:text-blue-700 font-semibold text-sm"
       >
         Learn More About Us →
       </a>
@@ -227,11 +227,11 @@ const RecentPostsWidget = ({
               href={`/blog/${post.id}`}
               className="flex items-start space-x-3 group hover:bg-gray-50 p-2 rounded-lg transition-colors duration-300"
             >
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Newspaper className="text-blue-600 w-5 h-5" />
+              <div className="w-12 h-12 bg-[rgb(var(--color-primary-50))] rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-[rgb(var(--color-primary-100))] transition-colors duration-300">
+                <Newspaper className="text-[rgb(var(--color-primary-700))] w-5 h-5" />
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2">
+                <h4 className="text-sm font-semibold text-gray-900 group-hover:text-[rgb(var(--color-primary-700))] transition-colors duration-300 line-clamp-2">
                   {post.title}
                 </h4>
                 <p className="text-xs text-gray-500 mt-1">{post.date}</p>
@@ -278,12 +278,12 @@ const CategoriesWidget = ({ categories }: { categories: Category[] }) => {
             href={`/blog/category/${category.name
               .toLowerCase()
               .replace(" ", "-")}`}
-            className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors duration-300 group"
+            className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-[rgb(var(--color-primary-50))] transition-colors duration-300 group border border-transparent hover:border-[rgb(var(--color-primary-100))]"
           >
-            <span className="text-gray-700 group-hover:text-blue-600 transition-colors duration-300 text-sm">
+            <span className="text-gray-700 group-hover:text-[rgb(var(--color-primary-700))] transition-colors duration-300 text-sm">
               {category.name}
             </span>
-            <span className="bg-blue-100 text-blue-600 text-xs font-semibold px-2 py-1 rounded-full">
+            <span className="bg-[rgb(var(--color-primary-50))] text-[rgb(var(--color-primary-700))] text-xs font-semibold px-2 py-1 rounded-full group-hover:bg-[rgb(var(--color-primary-100))] transition-colors duration-300">
               {category.count}
             </span>
           </a>
@@ -318,15 +318,15 @@ const NewsletterWidget = () => {
   return (
     <div
       ref={widgetRef}
-      className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-6 text-white mt-8"
+      className="bg-gradient-to-br from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] rounded-2xl p-6 text-white mt-8 border border-[rgb(var(--color-primary-800))]"
     >
-      <h3 className="text-lg font-bold mb-3">Stay Updated</h3>
+      <h3 className="text-lg font-bold mb-3 text-white">Stay Updated</h3>
       <p className="text-blue-100 text-sm mb-4">
         Get the latest agro export insights delivered to your inbox.
       </p>
       <a
         href="/newsletter"
-        className="block w-full bg-white text-blue-600 text-center py-3 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300"
+        className="block w-full bg-white text-[rgb(var(--color-primary-700))] text-center py-3 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300"
       >
         Subscribe Now
       </a>
@@ -387,11 +387,11 @@ const RelatedArticles = ({
   return (
     <section
       ref={sectionRef}
-      className="py-20 bg-gradient-to-br from-gray-50 to-blue-50"
+      className="py-20 bg-gradient-to-br from-[rgb(var(--color-neutral-50))] to-[rgb(var(--color-primary-50))]"
     >
       <div className="max-w-7xl mx-auto px-6">
         <div ref={headerRef} className="text-center mb-16">
-          <div className="inline-flex items-center space-x-2 bg-green-100 text-green-600 rounded-full px-4 py-2 mb-4">
+          <div className="inline-flex items-center space-x-2 bg-[rgb(var(--color-primary-50))] text-[rgb(var(--color-primary-700))] rounded-full px-4 py-2 mb-4">
             <BookOpen className="w-4 h-4" />
             <span className="font-semibold">Continue Reading</span>
           </div>
@@ -412,7 +412,7 @@ const RelatedArticles = ({
               }}
               className="bg-white rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 shadow-lg"
             >
-              <div className="h-48 bg-gradient-to-br from-blue-400 to-blue-600 relative overflow-hidden">
+              <div className="h-48 bg-gradient-to-br from-[rgb(var(--color-primary-600))] to-[rgb(var(--color-primary-800))] relative overflow-hidden">
                 <div className="w-full h-full flex items-center justify-center">
                   <Newspaper className="text-white w-16 h-16 opacity-50" />
                 </div>
@@ -427,7 +427,7 @@ const RelatedArticles = ({
                 <h3 className="text-xl font-bold text-gray-900 mb-3 leading-tight">
                   <a
                     href={`/blog/${post.id}`}
-                    className="hover:text-blue-600 transition-colors duration-300"
+                    className="hover:text-[rgb(var(--color-primary-700))] transition-colors duration-300"
                   >
                     {post.title}
                   </a>
@@ -439,7 +439,7 @@ const RelatedArticles = ({
                 </p>
                 <a
                   href={`/blog/${post.id}`}
-                  className="inline-flex items-center space-x-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors duration-300 group"
+                  className="inline-flex items-center space-x-2 text-[rgb(var(--color-primary-700))] font-semibold hover:text-[rgb(var(--color-primary-800))] transition-colors duration-300 group"
                 >
                   <span>Read More</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -452,7 +452,7 @@ const RelatedArticles = ({
         <div className="text-center mt-12">
           <a
             href="/blog"
-            className="inline-flex items-center space-x-3 bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl group"
+            className="inline-flex items-center space-x-3 bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white px-8 py-4 rounded-xl font-semibold hover:from-[rgb(var(--color-primary-600))] hover:to-[rgb(var(--color-primary-800))] transition-all duration-300 shadow-lg hover:shadow-xl group"
           >
             <span>View All Articles</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -646,7 +646,7 @@ export default function BlogDetailPage() {
                 <span className="text-gray-700 font-semibold">Tags:</span>
                 <a
                   href="/blog/tag/agro-export"
-                  className="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-200 transition-colors duration-300"
+                  className="bg-[rgb(var(--color-primary-50))] text-[rgb(var(--color-primary-700))] px-4 py-2 rounded-full text-sm font-medium hover:bg-[rgb(var(--color-primary-100))] transition-colors duration-300"
                 >
                   Agro Export
                 </a>
@@ -670,7 +670,7 @@ export default function BlogDetailPage() {
                 className="mt-12 pt-12 border-t border-gray-200"
               >
                 <div className="flex items-start space-x-6 bg-gray-50 rounded-2xl p-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-16 h-16 bg-gradient-to-br from-[rgb(var(--color-primary-600))] to-[rgb(var(--color-primary-800))] rounded-full flex items-center justify-center flex-shrink-0">
                     <span className="text-white font-bold text-lg">
                       {post.author
                         .split(" ")
@@ -698,14 +698,14 @@ export default function BlogDetailPage() {
               >
                 <a
                   href="/blog"
-                  className="flex items-center space-x-3 text-blue-600 hover:text-blue-700 font-semibold transition-colors duration-300 group"
+                  className="flex items-center space-x-3 text-[rgb(var(--color-primary-700))] hover:text-[rgb(var(--color-primary-800))] font-semibold transition-colors duration-300 group"
                 >
                   <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
                   <span>Back to Blog</span>
                 </a>
                 <a
                   href="/contact"
-                  className="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold"
+                  className="bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white px-6 py-3 rounded-xl hover:from-[rgb(var(--color-primary-600))] hover:to-[rgb(var(--color-primary-800))] transition-all duration-300 shadow-lg hover:shadow-xl font-semibold"
                 >
                   Contact Expert
                 </a>

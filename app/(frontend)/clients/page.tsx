@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import {
   Handshake,
   Globe,
@@ -83,11 +84,11 @@ const HeroSection = ({ gsapLoaded }: { gsapLoaded: boolean }) => {
   }, [gsapLoaded, animated]);
 
   return (
-    <section className="pt-32 pb-20 bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden">
+    <section className="pt-32 pb-20 bg-gradient-to-br from-[rgb(var(--color-primary-800))] to-[rgb(var(--color-primary-900))] relative overflow-hidden">
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[rgb(var(--color-primary-400))]/10 rounded-full blur-3xl floating"></div>
         <div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-green-400/10 rounded-full blur-3xl animate-pulse"
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-[rgb(var(--color-primary-300))]/10 rounded-full blur-3xl floating"
           style={{ animationDelay: "2s" }}
         ></div>
       </div>
@@ -95,9 +96,9 @@ const HeroSection = ({ gsapLoaded }: { gsapLoaded: boolean }) => {
       <div className="relative max-w-7xl mx-auto px-6 text-center z-20">
         <div
           ref={badgeRef}
-          className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6"
+          className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6 border border-white/20"
         >
-          <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+          <span className="w-2 h-2 bg-[rgb(var(--color-primary-300))] rounded-full"></span>
           <span className="text-sm font-medium text-white">Global Network</span>
         </div>
 
@@ -106,7 +107,7 @@ const HeroSection = ({ gsapLoaded }: { gsapLoaded: boolean }) => {
           className="text-5xl lg:text-6xl font-bold mb-6 leading-tight"
         >
           <span className="text-white block">Our Global</span>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 block">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[rgb(var(--color-primary-300))] to-[rgb(var(--color-primary-500))] block">
             Client Partners
           </span>
         </h1>
@@ -567,18 +568,22 @@ const PartnershipBenefitsSection = ({
 
           <div
             ref={testimonialRef}
-            className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-8 text-white shadow-2xl"
+            className="bg-gradient-to-br from-primary-600 to-primary-800 backdrop-blur-sm rounded-2xl p-8 text-white shadow-2xl"
           >
             <div className="flex items-center space-x-4 mb-6">
               <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
                 <Quote size={28} />
               </div>
               <div>
-                <h3 className="text-xl font-bold">Mohammed Al-Rashid</h3>
-                <p className="text-blue-100">Middle East Food Distributors</p>
+                <h3 className="text-xl text-white font-bold">
+                  Mohammed Al-Rashid
+                </h3>
+                <p className="text-neutral-300">
+                  Middle East Food Distributors
+                </p>
               </div>
             </div>
-            <p className="text-lg leading-relaxed mb-6">
+            <p className="text-lg text-white leading-relaxed mb-6">
               Shivaay International has been our trusted partner for rice
               imports for over 3 years. Their consistent quality and reliable
               delivery have helped us grow our business significantly across the
@@ -629,21 +634,24 @@ const CTASection = ({ gsapLoaded }: { gsapLoaded: boolean }) => {
   }, [gsapLoaded, animated]);
 
   return (
-    <section className="py-20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800"></div>
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?auto=format&fit=crop&w=2128&q=80')] bg-cover bg-center opacity-10"></div>
-
-      <div ref={ctaRef} className="relative max-w-4xl mx-auto px-6 text-center">
-        <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+    <section className="py-20 relative overflow-hidden bg-neutral-100">
+      <div
+        ref={ctaRef}
+        className="relative max-w-4xl mx-auto px-6  text-center"
+      >
+        <h2 className="text-4xl lg:text-5xl font-bold text-[rgb(var(--color-primary-900))] mb-6">
           Join Our Global Family
         </h2>
-        <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-xl text-[rgb(var(--color-gray-700))] mb-8 max-w-2xl mx-auto leading-relaxed">
           Become part of our growing network of satisfied clients worldwide and
           experience the Shivaay International difference in quality and
           service.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl text-lg group">
+          <Link
+            href="/contact"
+            className="bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white px-8 py-4 rounded-xl font-semibold hover:from-[rgb(var(--color-primary-600))] hover:to-[rgb(var(--color-primary-800))] transition-all duration-300 shadow-lg hover:shadow-xl text-lg group flex-1 sm:flex-none text-center"
+          >
             <span className="flex items-center justify-center space-x-2">
               <span>Become a Client</span>
               <ArrowRight
@@ -651,8 +659,11 @@ const CTASection = ({ gsapLoaded }: { gsapLoaded: boolean }) => {
                 size={20}
               />
             </span>
-          </button>
-          <button className="border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all duration-300 backdrop-blur-sm text-lg group">
+          </Link>
+          <Link
+            href="/products"
+            className="border-2 border-[rgb(var(--color-primary-700))] text-[rgb(var(--color-primary-700))] px-8 py-4 rounded-xl font-semibold hover:bg-[rgb(var(--color-primary-50))] hover:border-[rgb(var(--color-primary-600))] hover:text-[rgb(var(--color-primary-800))] transition-all duration-300 text-lg group flex-1 sm:flex-none text-center"
+          >
             <span className="flex items-center justify-center space-x-2">
               <span>View Products</span>
               <Package
@@ -660,7 +671,7 @@ const CTASection = ({ gsapLoaded }: { gsapLoaded: boolean }) => {
                 size={20}
               />
             </span>
-          </button>
+          </Link>
         </div>
       </div>
     </section>

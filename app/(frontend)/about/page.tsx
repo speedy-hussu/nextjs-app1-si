@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef,useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -108,262 +108,261 @@ export default function AboutPage() {
     },
   ];
 
+  useEffect(() => {
+    // Scroll to top on mount
+    window.scrollTo(0, 0);
 
-    useEffect(() => {
-      // Scroll to top on mount
-      window.scrollTo(0, 0);
-  
-      const timer = setTimeout(() => {
-        // Kill all existing animations
-        ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-        gsap.killTweensOf("*");
-  
-        // Hero Section Animations
-        const heroTimeline = gsap.timeline({
-          defaults: { ease: "power3.out" },
-          delay: 0.1,
-        });
-  
-        heroTimeline
-          .fromTo(
-            ".hero-badge",
-            { opacity: 0, y: -30 },
-            { opacity: 1, y: 0, duration: 0.8 }
-          )
-          .fromTo(
-            ".hero-title",
-            { opacity: 0, y: 40 },
-            { opacity: 1, y: 0, duration: 1 },
-            "-=0.4"
-          )
-          .fromTo(
-            ".hero-description",
-            { opacity: 0, y: 30 },
-            { opacity: 1, y: 0, duration: 0.8 },
-            "-=0.6"
-          );
-  
-        // Story Section Animations
-        gsap.fromTo(
-          ".about-content",
-          { x: -80, opacity: 0 },
-          {
-            scrollTrigger: {
-              trigger: storyRef.current,
-              start: "top 75%",
-              toggleActions: "play none none reverse",
-            },
-            x: 0,
-            opacity: 1,
-            duration: 1,
-            ease: "power3.out",
-          }
+    const timer = setTimeout(() => {
+      // Kill all existing animations
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      gsap.killTweensOf("*");
+
+      // Hero Section Animations
+      const heroTimeline = gsap.timeline({
+        defaults: { ease: "power3.out" },
+        delay: 0.1,
+      });
+
+      heroTimeline
+        .fromTo(
+          ".hero-badge",
+          { opacity: 0, y: -30 },
+          { opacity: 1, y: 0, duration: 0.8 }
+        )
+        .fromTo(
+          ".hero-title",
+          { opacity: 0, y: 40 },
+          { opacity: 1, y: 0, duration: 1 },
+          "-=0.4"
+        )
+        .fromTo(
+          ".hero-description",
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.8 },
+          "-=0.6"
         );
-  
-        gsap.fromTo(
-          ".story-image",
-          { x: 80, opacity: 0, scale: 0.9 },
-          {
-            scrollTrigger: {
-              trigger: storyRef.current,
-              start: "top 75%",
-              toggleActions: "play none none reverse",
-            },
-            x: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 1,
-            ease: "power3.out",
-          }
-        );
-  
-        gsap.fromTo(
-          ".story-badge",
-          { scale: 0, opacity: 0 },
-          {
-            scrollTrigger: {
-              trigger: storyRef.current,
-              start: "top 70%",
-              toggleActions: "play none none reverse",
-            },
-            scale: 1,
-            opacity: 1,
-            duration: 0.8,
-            delay: 0.5,
-            ease: "back.out(2)",
-          }
-        );
-  
-        // Stats counter animation
-        gsap.fromTo(
-          ".stat-box",
-          { y: 30, opacity: 0 },
-          {
-            scrollTrigger: {
-              trigger: storyRef.current,
-              start: "top 60%",
-              toggleActions: "play none none reverse",
-            },
-            y: 0,
-            opacity: 1,
-            stagger: 0.15,
-            duration: 0.8,
-            ease: "power3.out",
-          }
-        );
-  
-        // Mission & Vision Cards Animation
-        gsap.fromTo(
-          ".mission-card",
-          { y: 80, opacity: 0 },
-          {
-            scrollTrigger: {
-              trigger: missionRef.current,
-              start: "top 75%",
-              toggleActions: "play none none reverse",
-            },
-            y: 0,
-            opacity: 1,
-            stagger: 0.3,
-            duration: 1,
-            ease: "power3.out",
-          }
-        );
-  
-        // Mission card icon rotation
-        gsap.to(".mission-icon", {
+
+      // Story Section Animations
+      gsap.fromTo(
+        ".about-content",
+        { x: -80, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: storyRef.current,
+            start: "top 75%",
+            toggleActions: "play none none reverse",
+          },
+          x: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power3.out",
+        }
+      );
+
+      gsap.fromTo(
+        ".story-image",
+        { x: 80, opacity: 0, scale: 0.9 },
+        {
+          scrollTrigger: {
+            trigger: storyRef.current,
+            start: "top 75%",
+            toggleActions: "play none none reverse",
+          },
+          x: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 1,
+          ease: "power3.out",
+        }
+      );
+
+      gsap.fromTo(
+        ".story-badge",
+        { scale: 0, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: storyRef.current,
+            start: "top 70%",
+            toggleActions: "play none none reverse",
+          },
+          scale: 1,
+          opacity: 1,
+          duration: 0.8,
+          delay: 0.5,
+          ease: "back.out(2)",
+        }
+      );
+
+      // Stats counter animation
+      gsap.fromTo(
+        ".stat-box",
+        { y: 30, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: storyRef.current,
+            start: "top 60%",
+            toggleActions: "play none none reverse",
+          },
+          y: 0,
+          opacity: 1,
+          stagger: 0.15,
+          duration: 0.8,
+          ease: "power3.out",
+        }
+      );
+
+      // Mission & Vision Cards Animation
+      gsap.fromTo(
+        ".mission-card",
+        { y: 80, opacity: 0 },
+        {
           scrollTrigger: {
             trigger: missionRef.current,
-            start: "top 60%",
-            end: "bottom 40%",
-            scrub: 1,
+            start: "top 75%",
+            toggleActions: "play none none reverse",
           },
-          rotation: 360,
-          stagger: 0.2,
-        });
-  
-        // Values Section - Staggered entrance
+          y: 0,
+          opacity: 1,
+          stagger: 0.3,
+          duration: 1,
+          ease: "power3.out",
+        }
+      );
+
+      // Mission card icon rotation
+      gsap.to(".mission-icon", {
+        scrollTrigger: {
+          trigger: missionRef.current,
+          start: "top 60%",
+          end: "bottom 40%",
+          scrub: 1,
+        },
+        rotation: 360,
+        stagger: 0.2,
+      });
+
+      // Values Section - Staggered entrance
+      gsap.fromTo(
+        ".value-item",
+        { y: 60, opacity: 0, scale: 0.9, rotation: -5 },
+        {
+          scrollTrigger: {
+            trigger: valuesRef.current,
+            start: "top 75%",
+            toggleActions: "play none none reverse",
+          },
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          rotation: 0,
+          stagger: 0.15,
+          duration: 0.8,
+          ease: "back.out(1.2)",
+        }
+      );
+
+      // Team Section - Cards slide in from different directions
+      const teamCards = document.querySelectorAll(".team-card");
+
+      teamCards.forEach((card, index) => {
+        const direction = index % 3 === 0 ? -100 : index % 3 === 1 ? 0 : 100;
+
         gsap.fromTo(
-          ".value-item",
-          { y: 60, opacity: 0, scale: 0.9, rotation: -5 },
+          card,
+          {
+            x: direction,
+            y: index % 3 === 1 ? 100 : 0,
+            opacity: 0,
+          },
           {
             scrollTrigger: {
-              trigger: valuesRef.current,
-              start: "top 75%",
+              trigger: card,
+              start: "top 85%",
               toggleActions: "play none none reverse",
             },
+            x: 0,
             y: 0,
             opacity: 1,
-            scale: 1,
-            rotation: 0,
-            stagger: 0.15,
-            duration: 0.8,
-            ease: "back.out(1.2)",
-          }
-        );
-  
-        // Team Section - Cards slide in from different directions
-        const teamCards = document.querySelectorAll(".team-card");
-  
-        teamCards.forEach((card, index) => {
-          const direction = index % 3 === 0 ? -100 : index % 3 === 1 ? 0 : 100;
-  
-          gsap.fromTo(
-            card,
-            {
-              x: direction,
-              y: index % 3 === 1 ? 100 : 0,
-              opacity: 0,
-            },
-            {
-              scrollTrigger: {
-                trigger: card,
-                start: "top 85%",
-                toggleActions: "play none none reverse",
-              },
-              x: 0,
-              y: 0,
-              opacity: 1,
-              duration: 1,
-              ease: "power3.out",
-            }
-          );
-        });
-  
-        // CTA Section Animation
-        gsap.fromTo(
-          ".cta-content",
-          { y: 60, opacity: 0, scale: 0.95 },
-          {
-            scrollTrigger: {
-              trigger: ctaRef.current,
-              start: "top 70%",
-              toggleActions: "play none none reverse",
-            },
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 1.2,
+            duration: 1,
             ease: "power3.out",
           }
         );
-  
-        // Parallax background elements
-        gsap.to(".bg-float", {
+      });
+
+      // CTA Section Animation
+      gsap.fromTo(
+        ".cta-content",
+        { y: 60, opacity: 0, scale: 0.95 },
+        {
           scrollTrigger: {
-            trigger: heroRef.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: 1,
+            trigger: ctaRef.current,
+            start: "top 70%",
+            toggleActions: "play none none reverse",
           },
-          y: 200,
-          rotation: 90,
-        });
-  
-        // Counter animation
-        const animateCounter = (element: HTMLDivElement) => {
-          const target = parseInt(element.getAttribute("data-count") || "0");
-          const duration = 2000;
-          const step = target / (duration / 16);
-          let current = 0;
-  
-          const updateCounter = () => {
-            current += step;
-            if (current < target) {
-              element.textContent = Math.floor(current).toString();
-              requestAnimationFrame(updateCounter);
-            } else {
-              element.textContent = target.toString();
-            }
-          };
-  
-          const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                updateCounter();
-                observer.unobserve(entry.target);
-              }
-            });
-          });
-  
-          observer.observe(element);
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 1.2,
+          ease: "power3.out",
+        }
+      );
+
+      // Parallax background elements
+      gsap.to(".bg-float", {
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: 1,
+        },
+        y: 200,
+        rotation: 90,
+      });
+
+      // Counter animation
+      const animateCounter = (element: HTMLDivElement) => {
+        const target = parseInt(element.getAttribute("data-count") || "0");
+        const duration = 2000;
+        const step = target / (duration / 16);
+        let current = 0;
+
+        const updateCounter = () => {
+          current += step;
+          if (current < target) {
+            element.textContent = Math.floor(current).toString();
+            requestAnimationFrame(updateCounter);
+          } else {
+            element.textContent = target.toString();
+          }
         };
-  
-        countersRef.current.forEach((counter) => {
-          if (counter) animateCounter(counter);
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              updateCounter();
+              observer.unobserve(entry.target);
+            }
+          });
         });
-  
-        // Refresh ScrollTrigger
-        ScrollTrigger.refresh();
-      }, 100);
-  
-      // Cleanup
-      return () => {
-        clearTimeout(timer);
-        ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-        gsap.killTweensOf("*");
+
+        observer.observe(element);
       };
-    }, []);
+
+      countersRef.current.forEach((counter) => {
+        if (counter) animateCounter(counter);
+      });
+
+      // Refresh ScrollTrigger
+      ScrollTrigger.refresh();
+    }, 100);
+
+    // Cleanup
+    return () => {
+      clearTimeout(timer);
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      gsap.killTweensOf("*");
+    };
+  }, []);
   const addToRefs = (el: HTMLDivElement) => {
     if (el && !countersRef.current.includes(el)) {
       countersRef.current.push(el);
@@ -373,11 +372,11 @@ export default function AboutPage() {
   const toggleFAQ = (index: number) => {
     setExpandedFAQ(expandedFAQ === index ? null : index);
   };
-  
+
   // FAQ section animation
   useEffect(() => {
     if (!faqSectionRef.current) return;
-  
+
     const timer = setTimeout(() => {
       const ctx = gsap.context(() => {
         gsap.fromTo(
@@ -398,9 +397,9 @@ export default function AboutPage() {
             ease: "power2.out",
           }
         );
-  
+
         // Animate individual FAQ items
-        const faqItems = document.querySelectorAll('.faq-item');
+        const faqItems = document.querySelectorAll(".faq-item");
         faqItems.forEach((item, index) => {
           gsap.fromTo(
             item,
@@ -423,48 +422,48 @@ export default function AboutPage() {
           );
         });
       });
-  
+
       return () => ctx.revert();
     }, 200);
-  
+
     return () => clearTimeout(timer);
   }, []);
-// Testimonials animations
-useEffect(() => {
-  if (!testimonialsRef.current.length) return;
+  // Testimonials animations
+  useEffect(() => {
+    if (!testimonialsRef.current.length) return;
 
-  const timer = setTimeout(() => {
-    const ctx = gsap.context(() => {
-      testimonialsRef.current.forEach((card, index) => {
-        if (card) {
-          gsap.fromTo(card, 
-            {
-              opacity: 0,
-              y: 30,
-            },
-            {
-              scrollTrigger: {
-                trigger: card,
-                start: "top bottom-=100",
-                toggleActions: "play none none reverse",
+    const timer = setTimeout(() => {
+      const ctx = gsap.context(() => {
+        testimonialsRef.current.forEach((card, index) => {
+          if (card) {
+            gsap.fromTo(
+              card,
+              {
+                opacity: 0,
+                y: 30,
               },
-              opacity: 1,
-              y: 0,
-              duration: 0.6,
-              delay: index * 0.1,
-              ease: "power2.out",
-            }
-          );
-        }
+              {
+                scrollTrigger: {
+                  trigger: card,
+                  start: "top bottom-=100",
+                  toggleActions: "play none none reverse",
+                },
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                delay: index * 0.1,
+                ease: "power2.out",
+              }
+            );
+          }
+        });
       });
-    });
 
-    return () => ctx.revert();
-  }, 200);
+      return () => ctx.revert();
+    }, 200);
 
-  return () => clearTimeout(timer);
-}, []);
-  
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <main className="min-h-screen">
@@ -481,7 +480,7 @@ useEffect(() => {
       {/* Hero Section */}
       <section
         ref={heroRef}
-        className="pt-32 pb-20 bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden"
+        className="pt-32 pb-20 bg-gradient-to-br from-[rgb(var(--color-primary-900))] to-[rgb(var(--color-primary-700))] relative overflow-hidden"
       >
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
@@ -500,12 +499,12 @@ useEffect(() => {
 
           <h1 className="hero-title text-5xl lg:text-6xl font-bold mb-6 leading-tight">
             <span className="text-white">About Shivaay</span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 block">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[rgb(var(--color-primary-200))] to-[rgb(var(--color-primary-400))] block">
               International
             </span>
           </h1>
 
-          <p className="hero-description text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto">
+          <p className="hero-description text-xl text-white/90 leading-relaxed max-w-3xl mx-auto">
             Leading the global agro export industry with trust, quality, and
             reliability since our inception. Connecting Indian agricultural
             excellence with international markets.
@@ -863,7 +862,7 @@ useEffect(() => {
           </div>
         </div>
       </section>
-          {/* Testimonials Section */}
+      {/* Testimonials Section */}
       <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
@@ -975,40 +974,34 @@ useEffect(() => {
       </section>
 
       {/* CTA Section */}
-      <section ref={ctaRef} className="py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800"></div>
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-10"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?auto=format&fit=crop&w=2128&q=80')",
-          }}
-        ></div>
-
+      <section
+        ref={ctaRef}
+        className="py-20 relative overflow-hidden bg-neutral-100"
+      >
         <div className="cta-content relative max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+          <h2 className="text-4xl lg:text-5xl font-bold text-primary-900 mb-6">
             Ready to Partner With Us?
           </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-primary-800 mb-8 max-w-2xl mx-auto leading-relaxed">
             Join our global network of satisfied clients and experience the
             Shivaay International difference in quality and service.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/contact">
-            <button className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl text-lg group">
-              <span className="flex items-center justify-center space-x-2">
-                <span>Get In Touch</span>
-                <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
-              </span>
-            </button>
+              <button className="inline-flex items-center space-x-3 bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white px-8 py-4 rounded-xl font-semibold hover:from-[rgb(var(--color-primary-600))] hover:to-[rgb(var(--color-primary-800))] transition-all duration-300 shadow-lg hover:shadow-xl group text-lg">
+                <span className="flex items-center justify-center space-x-2">
+                  <span>Get In Touch</span>
+                  <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
+                </span>
+              </button>
             </Link>
             <Link href="/products">
-            <button className="border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all duration-300 backdrop-blur-sm text-lg group">
-              <span className="flex items-center justify-center space-x-2">
-                <span>View Products</span>
-                <Boxes className="transition-transform duration-300 group-hover:scale-110" />
-              </span>
-            </button>
+              <button className="border-2  border-primary-900 text-primary-900 px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all duration-300 backdrop-blur-sm text-lg group">
+                <span className="flex items-center justify-center space-x-2">
+                  <span>View Products</span>
+                  <Boxes className="transition-transform duration-300 group-hover:scale-110" />
+                </span>
+              </button>
             </Link>
           </div>
         </div>

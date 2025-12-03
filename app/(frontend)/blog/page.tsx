@@ -99,12 +99,12 @@ const HeroSection = () => {
   return (
     <section
       ref={heroRef}
-      className="pt-32 pb-20 bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden"
+      className="pt-32 pb-20 bg-gradient-to-br from-[rgb(var(--color-primary-800))] to-[rgb(var(--color-primary-900))] relative overflow-hidden"
     >
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[rgb(var(--color-primary-400))]/10 rounded-full blur-3xl floating"></div>
         <div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-green-400/10 rounded-full blur-3xl animate-pulse"
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-[rgb(var(--color-primary-300))]/10 rounded-full blur-3xl floating"
           style={{ animationDelay: "2s" }}
         ></div>
       </div>
@@ -112,9 +112,9 @@ const HeroSection = () => {
       <div className="relative max-w-7xl mx-auto px-6 text-center z-20">
         <div
           ref={badgeRef}
-          className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6"
+          className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6 border border-white/20"
         >
-          <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+          <span className="w-2 h-2 bg-[rgb(var(--color-primary-300))] rounded-full"></span>
           <span className="text-sm font-medium text-white">
             Insights & Updates
           </span>
@@ -126,7 +126,7 @@ const HeroSection = () => {
           </span>
           <span
             ref={subtitleRef}
-            className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 block leading-relaxed"
+            className="text-transparent bg-clip-text bg-gradient-to-r from-[rgb(var(--color-primary-300))] to-[rgb(var(--color-primary-500))] block leading-relaxed"
           >
             Blog
           </span>
@@ -134,7 +134,7 @@ const HeroSection = () => {
 
         <p
           ref={descRef}
-          className="text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto"
+          className="text-xl text-white/90 leading-relaxed max-w-3xl mx-auto"
         >
           Stay updated with the latest trends, insights, and news in the global
           agro export industry. Expert analysis and valuable information for
@@ -149,7 +149,9 @@ const HeroSection = () => {
 const BlogPostCard = ({ post, index }: { post: BlogPost; index: number }) => {
   const cardRef = useRef(null);
   const Icon = post.icon ? iconMap[post.icon] || Newspaper : Newspaper;
-  const gradientClass = post.gradient || "from-blue-400 to-blue-600";
+  const gradientClass =
+    post.gradient ||
+    "from-[rgb(var(--color-primary-600))] to-[rgb(var(--color-primary-800))]";
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -173,7 +175,7 @@ const BlogPostCard = ({ post, index }: { post: BlogPost; index: number }) => {
   return (
     <article
       ref={cardRef}
-      className="bg-white rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 shadow-lg"
+      className="bg-white rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 shadow-lg hover:shadow-[0_10px_30px_rgba(var(--color-primary-700),0.1)]"
     >
       {post.image ? (
         <div className="h-48 relative overflow-hidden">
@@ -182,7 +184,7 @@ const BlogPostCard = ({ post, index }: { post: BlogPost; index: number }) => {
             alt={post.title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-sm rounded-full px-3 py-1">
+          <div className="absolute top-4 left-4 bg-[rgb(var(--color-primary-900))]/90 backdrop-blur-sm rounded-full px-3 py-1 border border-white/10">
             <span className="text-white text-sm font-semibold">
               {post.category}
             </span>
@@ -225,10 +227,10 @@ const BlogPostCard = ({ post, index }: { post: BlogPost; index: number }) => {
         </h2>
         <a
           href={`/blog/${post.id}`}
-          className="inline-flex items-center space-x-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors duration-300 group"
+          className="inline-flex items-center space-x-2 text-[rgb(var(--color-primary-700))] hover:text-[rgb(var(--color-primary-800))] font-semibold group"
         >
           <span>Read More</span>
-          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300 text-[rgb(var(--color-primary-600))]" />
         </a>
       </div>
     </article>
@@ -268,9 +270,9 @@ const SearchWidget = ({ onSearch }: { onSearch: (term: string) => void }) => {
           type="text"
           placeholder="Search articles..."
           onChange={(e) => onSearch(e.target.value)}
-          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-primary-500))] focus:border-transparent"
         />
-        <Search className="w-5 h-5 absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        <Search className="w-5 h-5 absolute right-4 top-1/2 transform -translate-y-1/2 text-[rgb(var(--color-primary-500))]" />
       </div>
     </div>
   );
@@ -310,16 +312,18 @@ const RecentPostsWidget = ({ posts }: { posts: BlogPost[] }) => {
           <a
             key={post.id}
             href={`/blog/${post.id}`}
-            className="flex items-start space-x-3 group hover:bg-gray-50 p-2 rounded-lg transition-colors duration-300"
+            className="flex items-start space-x-3 group hover:bg-[rgb(var(--color-primary-50))] p-3 rounded-lg transition-all duration-300 border border-transparent hover:border-[rgb(var(--color-primary-100))]"
           >
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-              <Newspaper className="text-blue-600 w-5 h-5" />
+            <div className="w-12 h-12 bg-[rgb(var(--color-primary-50))] rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-[rgb(var(--color-primary-100))] transition-colors duration-300">
+              <Newspaper className="text-[rgb(var(--color-primary-600))] w-5 h-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <h4 className="text-sm font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300 truncate">
+              <h4 className="text-sm font-semibold text-gray-900 group-hover:text-[rgb(var(--color-primary-700))] transition-colors duration-300 truncate">
                 {post.title}
               </h4>
-              <p className="text-xs text-gray-500 mt-1">{post.date}</p>
+              <p className="text-xs text-gray-500 group-hover:text-[rgb(var(--color-primary-600))] mt-1 transition-colors duration-300">
+                {post.date}
+              </p>
             </div>
           </a>
         ))}
@@ -364,12 +368,12 @@ const CategoriesWidget = ({ categories }: { categories: Category[] }) => {
             href={`/blog/category/${category.name
               .toLowerCase()
               .replace(" ", "-")}`}
-            className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors duration-300 group"
+            className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-[rgb(var(--color-primary-50))] transition-all duration-300 group border border-transparent hover:border-[rgb(var(--color-primary-100))]"
           >
-            <span className="text-gray-700 group-hover:text-blue-600 transition-colors duration-300">
+            <span className="text-gray-700 group-hover:text-[rgb(var(--color-primary-700))] transition-colors duration-300">
               {category.name}
             </span>
-            <span className="bg-blue-100 text-blue-600 text-xs font-semibold px-2 py-1 rounded-full">
+            <span className="bg-[rgb(var(--color-primary-50))] text-[rgb(var(--color-primary-700))] text-xs font-semibold px-2.5 py-1 rounded-full group-hover:bg-[rgb(var(--color-primary-100))] transition-colors duration-300">
               {category.count}
             </span>
           </a>
@@ -427,11 +431,13 @@ const NewsletterSection = () => {
   return (
     <section
       ref={newsletterRef}
-      className="py-20 bg-gradient-to-br from-gray-50 to-blue-50"
+      className="py-20 bg-neutral-100"
     >
       <div className="max-w-4xl mx-auto px-6 text-center">
-        <h2 className="text-4xl font-bold text-gray-900 mb-6">Stay Updated</h2>
-        <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+        <h2 className="text-4xl font-bold text-primary-900 mb-6">
+          Stay Updated
+        </h2>
+        <p className="text-xl text-primary-800 mb-8 max-w-2xl mx-auto leading-relaxed">
           Subscribe to our newsletter and never miss the latest insights,
           trends, and updates from the world of agro exports.
         </p>
@@ -442,13 +448,13 @@ const NewsletterSection = () => {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="flex-1 px-6 py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+              className="flex-1 px-6 py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-600 focus:border-transparent shadow-sm"
               required
             />
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white px-8 py-4 rounded-xl font-semibold hover:from-[rgb(var(--color-primary-600))] hover:to-[rgb(var(--color-primary-800))] transition-all duration-300 shadow-lg hover:shadow-xl text-white px-8 py-4 rounded-xl font-semibold hover:bg-primary transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Subscribing..." : "Subscribe"}
             </button>
@@ -564,10 +570,7 @@ export default function BlogPage() {
     startIndex + postsPerPage
   );
 
-  const recentPosts = useMemo(
-    () => posts.slice(0, 5),
-    [posts]
-  );
+  const recentPosts = useMemo(() => posts.slice(0, 5), [posts]);
 
   const categories = useMemo(() => {
     return CATEGORY_OPTIONS.map((name) => ({

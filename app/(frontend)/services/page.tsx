@@ -96,12 +96,12 @@ const HeroSection = () => {
   return (
     <section
       ref={heroRef}
-      className="pt-32 pb-20 bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden"
+      className="pt-32 pb-20 bg-gradient-to-br from-[rgb(var(--color-primary-900))] to-[rgb(var(--color-primary-700))] relative overflow-hidden"
     >
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[rgb(var(--color-primary-200))]/10 rounded-full blur-3xl animate-pulse"></div>
         <div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-green-400/10 rounded-full blur-3xl animate-pulse"
+          className="absolute -bottom-40 -left-40 w-80 h-80 bg-[rgb(var(--color-primary-400))]/10 rounded-full blur-3xl animate-pulse"
           style={{ animationDelay: "2s" }}
         ></div>
       </div>
@@ -120,14 +120,14 @@ const HeroSection = () => {
           className="text-5xl lg:text-6xl font-bold mb-6 leading-tight"
         >
           <span className="text-white block">Comprehensive</span>
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 block">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[rgb(var(--color-primary-200))] to-[rgb(var(--color-primary-400))] block">
             Export Services
           </span>
         </h1>
 
         <p
           ref={subtitleRef}
-          className="text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto"
+          className="text-xl text-white/90 leading-relaxed max-w-3xl mx-auto"
         >
           End-to-end agro export solutions tailored to meet global market
           demands. From sourcing to delivery, we handle every aspect of your
@@ -620,16 +620,16 @@ const CTASection = () => {
   }, []);
 
   return (
-    <section className="py-20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800"></div>
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?auto=format&fit=crop&w=2128&q=80')] bg-cover bg-center opacity-10"></div>
+    <section className="py-20 relative overflow-hidden bg-neutral-100">
+      {/* Background pattern */}
+    
 
       <div ref={ctaRef} className="relative max-w-4xl mx-auto px-6 text-center">
-        <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+        <h2 className="text-4xl lg:text-5xl font-bold text-[rgb(var(--color-primary-900))] mb-6">
           Ready to Start Exporting?
         </h2>
 
-        <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+        <p className="text-xl text-[rgb(var(--color-gray-700))] mb-8 max-w-2xl mx-auto leading-relaxed">
           Let us handle your agro export needs with our expertise and complete
           service workflow.
         </p>
@@ -637,12 +637,12 @@ const CTASection = () => {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/contact"
-            className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl text-lg group"
+            className="inline-flex items-center space-x-3 bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white px-8 py-4 rounded-xl font-semibold hover:from-[rgb(var(--color-primary-600))] hover:to-[rgb(var(--color-primary-800))] transition-all duration-300 shadow-lg hover:shadow-xl group text-lg"
           >
             <span className="flex items-center justify-center space-x-2">
               <span>Get Free Consultation</span>
               <ArrowRight
-                className="group-hover:translate-x-1 transition-transform duration-300"
+                className="transition-transform duration-300 group-hover:translate-x-1"
                 size={20}
               />
             </span>
@@ -650,12 +650,12 @@ const CTASection = () => {
 
           <a
             href="tel:+1234567890"
-            className="border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all duration-300 backdrop-blur-sm text-lg group"
+            className="border-2 border-[rgb(var(--color-primary-900))] text-[rgb(var(--color-primary-900))] px-8 py-4 rounded-xl font-semibold hover:bg-[rgb(var(--color-primary-50))] transition-all duration-300 text-lg group"
           >
             <span className="flex items-center justify-center space-x-2">
               <span>Call Our Experts</span>
               <Phone
-                className="group-hover:scale-110 transition-transform duration-300"
+                className="transition-transform duration-300 group-hover:scale-110"
                 size={20}
               />
             </span>

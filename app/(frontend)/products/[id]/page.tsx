@@ -40,7 +40,6 @@ interface Product {
   image?: string;
 }
 
-
 const ProductDetailPage = () => {
   const params = useParams();
   const router = useRouter();
@@ -56,7 +55,7 @@ const ProductDetailPage = () => {
 
         try {
           setIsLoading(true);
-          
+
           // Fetch the current product
           const productResponse = await fetch(`/api/products/${productId}`);
           if (!productResponse.ok) {
@@ -72,10 +71,12 @@ const ProductDetailPage = () => {
           if (allProductsResponse.ok) {
             const allProducts = await allProductsResponse.json();
             // Get related products (same category, excluding current)
-            const related = allProducts.filter(
-              (p: Product) =>
-                p.category === productData.category && p.id !== productData.id
-            ).slice(0, 3);
+            const related = allProducts
+              .filter(
+                (p: Product) =>
+                  p.category === productData.category && p.id !== productData.id
+              )
+              .slice(0, 3);
             setRelatedProducts(related);
           }
         } catch (err) {
@@ -188,18 +189,21 @@ const ProductDetailPage = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <Package className="w-16 h-16 text-[rgb(var(--color-primary-600))] mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-[rgb(var(--color-gray-900))] mb-4">
             Product Not Found
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-[rgb(var(--color-gray-600))] mb-6">
             The product you&apos;re looking for doesn&apos;t exist.
           </p>
           <Link
             href="/products"
-            className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-700 font-semibold"
+            className="inline-flex items-center space-x-2 text-[rgb(var(--color-primary-700))] hover:text-[rgb(var(--color-primary-800))] font-semibold group"
           >
-            <ArrowRight size={20} className="rotate-180" />
+            <ArrowRight
+              size={20}
+              className="rotate-180 transition-transform duration-200 group-hover:-translate-x-1"
+            />
             <span>Back to Products</span>
           </Link>
         </div>
@@ -211,19 +215,19 @@ const ProductDetailPage = () => {
     // 5. ATTACH REF TO THE MAIN CONTAINER
     <div ref={scope} className="bg-gray-50">
       {/* Hero Section */}
-      <section className="pt-32 pb-20 bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden">
+      <section className="pt-32 pb-20 bg-gradient-to-br from-[rgb(var(--color-primary-800))] to-[rgb(var(--color-primary-900))] relative overflow-hidden">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl floating"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-[rgb(var(--color-primary-400))]/10 rounded-full blur-3xl floating"></div>
           <div
-            className="absolute -bottom-40 -left-40 w-80 h-80 bg-green-400/10 rounded-full blur-3xl floating"
+            className="absolute -bottom-40 -left-40 w-80 h-80 bg-[rgb(var(--color-primary-300))]/10 rounded-full blur-3xl floating"
             style={{ animationDelay: "2s" }}
           ></div>
         </div>
 
         <div className="relative max-w-7xl mx-auto px-6 text-center z-20">
           <div className="hero-badge inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-            <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
+            <span className="w-2 h-2 bg-[rgb(var(--color-primary-300))] rounded-full"></span>
             <span className="text-sm font-medium text-white">
               Premium Agro Product
             </span>
@@ -233,7 +237,7 @@ const ProductDetailPage = () => {
             <span className="text-white">{product.name}</span>
           </h1>
 
-          <p className="text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto">
+          <p className="text-xl text-white/90 leading-relaxed max-w-3xl mx-auto">
             Premium quality {product.name.toLowerCase()} exported worldwide with
             strict quality control and international certifications.
           </p>
@@ -321,10 +325,6 @@ const ProductDetailPage = () => {
                     <div className="space-y-2">
                       {product.specifications.split("\n").map((spec, index) => (
                         <div key={index} className="flex items-start space-x-3">
-                          <Check
-                            className="text-green-500 flex-shrink-0 mt-1"
-                            size={16}
-                          />
                           <span className="text-gray-700">{spec}</span>
                         </div>
                       ))}
@@ -359,19 +359,19 @@ const ProductDetailPage = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
                   href={`/contact?product=${encodeURIComponent(product.name)}`}
-                  className="bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl text-lg text-center group flex-1"
+                  className="bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white px-8 py-4 rounded-xl font-semibold hover:from-[rgb(var(--color-primary-600))] hover:to-[rgb(var(--color-primary-800))] transition-all duration-300 shadow-lg hover:shadow-xl text-lg text-center group flex-1"
                 >
                   <span className="flex items-center justify-center space-x-2">
                     <span>Request Quote</span>
                     <Mail
                       size={20}
-                      className="group-hover:scale-110 transition-transform duration-300"
+                      className="group-hover:translate-x-1 transition-transform duration-300"
                     />
                   </span>
                 </Link>
                 <a
                   href="tel:+1234567890"
-                  className="border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-600 hover:text-white transition-all duration-300 text-lg text-center group flex-1"
+                  className="border-2 border-[rgb(var(--color-primary-700))] text-[rgb(var(--color-primary-700))] px-8 py-4 rounded-xl font-semibold hover:bg-[rgb(var(--color-primary-50))] hover:border-[rgb(var(--color-primary-600))] hover:text-[rgb(var(--color-primary-800))] transition-all duration-300 text-lg text-center group flex-1"
                 >
                   <span className="flex items-center justify-center space-x-2">
                     <span>Call Expert</span>
@@ -388,11 +388,14 @@ const ProductDetailPage = () => {
       </section>
 
       {/* Related Products Section */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+      <section className="py-20 bg-gradient-to-br from-[rgb(var(--color-gray-50))] to-[rgb(var(--color-primary-50))]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center space-x-2 bg-green-100 text-green-600 rounded-full px-4 py-2 mb-4">
-              <Package size={18} />
+            <div className="inline-flex items-center space-x-2 bg-[rgb(var(--color-primary-50))] text-[rgb(var(--color-primary-700))] rounded-full px-4 py-2 mb-4 border border-[rgb(var(--color-primary-100))]">
+              <Package
+                size={18}
+                className="text-[rgb(var(--color-primary-500))]"
+              />
               <span className="font-semibold">Related Products</span>
             </div>
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -449,7 +452,7 @@ const ProductDetailPage = () => {
           <div className="text-center mt-12">
             <Link
               href="/products"
-              className="inline-flex items-center space-x-3 bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl group"
+              className="inline-flex items-center space-x-3 bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white px-8 py-4 rounded-xl font-semibold hover:from-[rgb(var(--color-primary-600))] hover:to-[rgb(var(--color-primary-800))] transition-all duration-300 shadow-lg hover:shadow-xl text-lg text-center px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl group"
             >
               <span>View All Products</span>
               <ArrowRight
@@ -532,39 +535,39 @@ const ProductDetailPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800"></div>
+      <section className="py-20 relative overflow-hidden bg-white">
+        <div className="absolute inset-0 bg-white"></div>
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-10"
+          className="absolute inset-0 bg-cover bg-center opacity-5"
           style={{
             backgroundImage: `url('https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=2128&q=80')`,
           }}
         ></div>
 
         <div className="relative max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+          <h2 className="text-4xl lg:text-5xl font-bold text-[rgb(var(--color-primary-900))] mb-6">
             Ready to Order {product.name}?
           </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-[rgb(var(--color-gray-700))] mb-8 max-w-2xl mx-auto leading-relaxed">
             Contact us today for pricing, samples, and customized solutions
             tailored to your requirements.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href={`/contact?product=${encodeURIComponent(product.name)}`}
-              className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl text-lg group"
+              className="inline-flex items-center justify-center bg-gradient-to-r from-[rgb(var(--color-primary-600))] to-[rgb(var(--color-primary-800))] text-white px-8 py-4 rounded-xl font-semibold hover:from-[rgb(var(--color-primary-500))] hover:to-[rgb(var(--color-primary-700))] transition-all duration-300 shadow-md hover:shadow-lg text-lg group"
             >
               <span className="flex items-center justify-center space-x-2">
                 <span>Get Free Quote</span>
                 <Mail
                   size={20}
-                  className="group-hover:scale-110 transition-transform duration-300"
+                  className="transition-transform duration-300 group-hover:translate-x-1"
                 />
               </span>
             </Link>
             <a
               href="tel:+1234567890"
-              className="border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all duration-300 backdrop-blur-sm text-lg group"
+              className="inline-flex items-center justify-center border-2 border-[rgb(var(--color-primary-700))] text-[rgb(var(--color-primary-700))] px-8 py-4 rounded-xl font-semibold hover:bg-[rgb(var(--color-primary-50))] hover:border-[rgb(var(--color-primary-600))] hover:text-[rgb(var(--color-primary-800))] transition-all duration-300 text-lg group"
             >
               <span className="flex items-center justify-center space-x-2">
                 <span>Call Our Expert</span>

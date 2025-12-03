@@ -1,515 +1,511 @@
-// app/products/page.tsx
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import {
-  ArrowRight,
-  Search,
-  Phone,
-  Package,
-  Sprout,
-  Wheat, // For Wheat Grains
-  Feather, // For Rice (like a grain/lightness)
-  Sparkles, // For Spices
-  HeartHandshake, // For Pulses (symbolizing nourishment)
-  Globe, // Replacing 🌍
-  CheckCircle, // Replacing ✓
-  Truck, // Replacing 🚚
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { checkAuth, logout } from "@/app/(backend)/lib/client-auth";
+import { Plus, Edit, Trash2, Upload, X, Package, Home } from "lucide-react";
 
-// 1. IMPORT GSAP & SCROLLTRIGGER
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+const CATEGORY_OPTIONS = ["rice", "wheat", "spices", "pulses"] as const;
+type CategoryOption = (typeof CATEGORY_OPTIONS)[number];
 
-// 2. REGISTER PLUGIN GLOBALLY (outside the component)
-// This runs once during module loading on the client side.
-if (typeof window !== "undefined") {   
-  gsap.registerPlugin(ScrollTrigger);
-}
-
-// Product type
 interface Product {
   id: string;
   name: string;
-  category: "rice" | "wheat" | "spices" | "pulses";
+  category: CategoryOption;
   description: string;
   specifications: string;
   image?: string;
 }
 
-// Category color config (Using Lucide components)
-const categoryColors = {
-  rice: {
-    gradient: "from-amber-400 to-amber-600",
-    text: "text-amber-600",
-    bg: "bg-amber-100",
-    icon: Feather, // Light, long grain feeling
-  },
-  wheat: {
-    gradient: "from-yellow-400 to-yellow-600",
-    text: "text-yellow-600",
-    bg: "bg-yellow-100",
-    icon: Wheat, // Direct representation
-  },
-  spices: {
-    gradient: "from-red-400 to-red-600",
-    text: "text-red-600",
-    bg: "bg-red-100",
-    icon: Sparkles, // Vibrant, attractive symbol
-  },
-  pulses: {
-    gradient: "from-green-400 to-green-600",
-    text: "text-green-600",
-    bg: "bg-green-100",
-    icon: HeartHandshake, // Healthy, nourishing, supportive
-  },
+interface FormData {
+  name: string;
+  category: CategoryOption;
+  description: string;
+  specifications: string;
+  image: string;
+}
+
+const INITIAL_FORM_STATE: FormData = {
+  name: "",
+  category: "rice",
+  description: "",
+  specifications: "",
+  image: "",
 };
 
-// Hero Section
-const HeroSection = () => {
-  const heroRef = useRef(null);
+export default function ProductManagementPage() {
+  const router = useRouter();
+  const [user, setUser] = useState<{
+    userId: string;
+    username: string;
+    role: string;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [previousImage, setPreviousImage] = useState("");
+  const [formData, setFormData] = useState<FormData>(INITIAL_FORM_STATE);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Hero Section Text Animation
-      gsap.from(heroRef.current, {
-        y: -50,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
-        delay: 0.2,
+    const verifyAuth = async () => {
+      const authResult = await checkAuth();
+      if (authResult.isAuthenticated && authResult.user) {
+        setUser(authResult.user);
+        await fetchProducts();
+      } else {
+        router.push("/admin/login");
+      }
+      setLoading(false);
+    };
+
+    verifyAuth();
+  }, [router]);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("/api/products");
+      if (response.ok) {
+        const data = await response.json();
+        setProducts(data);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  const deleteImageFromServer = async (imagePath: string) => {
+    if (!imagePath) return;
+
+    try {
+      await fetch(`/api/delete-image?path=${encodeURIComponent(imagePath)}`, {
+        method: "DELETE",
+      });
+    } catch (error) {
+      console.error("Error deleting image:", error);
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const uploadFormData = new FormData();
+      uploadFormData.append("file", file);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: uploadFormData,
       });
 
-      // Background floating animation
-      gsap.to(".floating", {
-        y: "+=20",
-        rotation: 1,
-        repeat: -1,
-        yoyo: true,
-        duration: 4,
-        ease: "sine.inOut",
-      });
-    }, heroRef);
+      if (response.ok) {
+        const data = await response.json();
 
-    return () => ctx.revert();
-  }, []);
+        // Delete old image if replacing
+        if (formData.image) {
+          await deleteImageFromServer(formData.image);
+        }
+
+        setFormData({ ...formData, image: data.path });
+      } else {
+        const error = await response.json();
+        alert(error.error || "Failed to upload image");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Failed to upload image");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleRemoveImage = async () => {
+    if (formData.image) {
+      await deleteImageFromServer(formData.image);
+      setFormData({ ...formData, image: "" });
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const url = editingProduct
+        ? `/api/products/${editingProduct.id}`
+        : "/api/products";
+      const method = editingProduct ? "PATCH" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        // Delete old image if editing and image changed
+        if (
+          editingProduct &&
+          previousImage &&
+          previousImage !== formData.image
+        ) {
+          await deleteImageFromServer(previousImage);
+        }
+
+        await fetchProducts();
+        resetForm();
+        alert(
+          editingProduct
+            ? "Product updated successfully!"
+            : "Product created successfully!"
+        );
+      } else {
+        const error = await response.json();
+        alert(error.error || "Failed to save product");
+      }
+    } catch (error) {
+      console.error("Error saving product:", error);
+      alert("Failed to save product");
+    }
+  };
+
+
+  const handleEdit = (product: Product) => {
+    setEditingProduct(product);
+    setPreviousImage(product.image || "");
+    setFormData({
+      name: product.name,
+      category: product.category,
+      description: product.description,
+      specifications: product.specifications,
+      image: product.image || "",
+    });
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this product?")) return;
+
+    const productToDelete = products.find((p) => p.id === id);
+
+    try {
+      const response = await fetch(`/api/products/${id}`, { method: "DELETE" });
+
+      if (response.ok) {
+        if (productToDelete?.image) {
+          await deleteImageFromServer(productToDelete.image);
+        }
+        await fetchProducts();
+        alert("Product deleted successfully!");
+      } else {
+        alert("Failed to delete product");
+      }
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      alert("Failed to delete product");
+    }
+  };
+
+  const resetForm = async () => {
+    // Delete uploaded image if canceling without saving
+   
+
+    setFormData(INITIAL_FORM_STATE);
+    setEditingProduct(null);
+    setPreviousImage("");
+    setShowForm(false);
+  };
+
+  const dltImg = async (id: string) => {
+    await deleteImageFromServer(id);
+  };
+  const handleLogout = async () => {
+    await logout();
+    router.push("/admin/login");
+  };
+
+  const getCategoryColor = (category: string) => {
+    const colors = {
+      rice: "bg-green-100 text-green-800",
+      wheat: "bg-yellow-100 text-yellow-800",
+      spices: "bg-red-100 text-red-800",
+      pulses: "bg-orange-100 text-orange-800",
+    };
+    return (
+      colors[category as keyof typeof colors] || "bg-gray-100 text-gray-800"
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-xl">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!user) return null;
 
   return (
-    <section className="pt-32 pb-20 bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl floating"></div>
-        <div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-green-400/10 rounded-full blur-3xl floating"
-          style={{ animationDelay: "2s" }}
-        ></div>
-      </div>
-
-      <div
-        ref={heroRef}
-        className="relative max-w-7xl mx-auto px-6 text-center"
-      >
-        <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-          <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
-          <span className="text-sm font-medium text-white">
-            Premium Agro Products
-          </span>
+    <div className="min-h-full bg-gray-50 p-8 pt-32">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-6 border-t-4 border-[rgb(65,114,190)]">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800">
+                Product Management
+              </h1>
+              <p className="text-gray-600 mt-2">
+                Create, edit, and manage your product catalog
+              </p>
+            </div>
+            <div className="flex gap-4 flex-wrap justify-end">
+              <button
+                onClick={() => router.push("/admin")}
+                className="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-4 py-2 rounded-lg transition flex items-center gap-2"
+              >
+                <Home size={20} />
+                Admin Home
+              </button>
+              <button
+                onClick={() => setShowForm(!showForm)}
+                className="bg-[rgb(65,114,190)] hover:bg-[rgb(52,91,152)] text-white font-semibold px-4 py-2 rounded-lg transition flex items-center gap-2"
+              >
+                <Plus size={20} />
+                {showForm ? "Cancel" : "Add Product"}
+              </button>
+              <button
+                onClick={handleLogout}
+                className="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
         </div>
 
-        <h1 className="text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-          Our Premium
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 block">
-            Product Range
-          </span>
-        </h1>
+        {/* Product Form */}
+        {showForm && (
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              {editingProduct ? "Edit Product" : "Add New Product"}
+            </h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-gray-700 font-medium mb-1">
+                    Product Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    placeholder="e.g., Basmati Rice Premium"
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgb(65,114,190)]"
+                  />
+                </div>
 
-        <p className="text-xl text-blue-100 leading-relaxed max-w-3xl mx-auto">
-          Discover our extensive range of high-quality agricultural products,
-          carefully sourced and exported to meet international standards and
-          customer expectations worldwide.
-        </p>
-      </div>
-    </section>
-  );
-};
+                <div>
+                  <label className="block text-gray-700 font-medium mb-1">
+                    Category *
+                  </label>
+                  <select
+                    required
+                    value={formData.category}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        category: e.target.value as CategoryOption,
+                      })
+                    }
+                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgb(65,114,190)] bg-white"
+                  >
+                    {CATEGORY_OPTIONS.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-// Product Card
-const ProductCard = ({ product }: { product: Product }) => {
-  const colors = categoryColors[product.category];
-  const IconComponent = colors.icon;
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">
+                  Description *
+                </label>
+                <textarea
+                  required
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                  rows={3}
+                  placeholder="Brief description of the product..."
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgb(65,114,190)]"
+                />
+              </div>
 
-  return (
-    <div className="bg-white rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-gray-100 shadow-lg product-card">
-      <div
-        className={`h-48 bg-gradient-to-br ${colors.gradient} relative overflow-hidden`}
-      >
-        {product.image ? (
-          <div className="relative w-full h-full">
-            <Image
-              src={product.image}
-              alt={product.name}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover"
-            />
-          </div>
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            {/* Use the Lucide Icon component */}
-            <IconComponent className="w-16 h-16 opacity-50 text-white" />
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">
+                  Specifications *
+                </label>
+                <textarea
+                  required
+                  value={formData.specifications}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      specifications: e.target.value,
+                    })
+                  }
+                  rows={6}
+                  placeholder="Enter detailed specifications (e.g., Origin, Grain Length, Moisture Content, etc.)"
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgb(65,114,190)] font-mono text-sm"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Tip: Use line breaks to separate different specifications
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-gray-700 font-medium mb-1">
+                  Product Image
+                </label>
+                <div className="flex items-center gap-4">
+                  <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg transition flex items-center gap-2">
+                    <Upload size={20} />
+                    {uploadingImage ? "Uploading..." : "Upload Image"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      disabled={uploadingImage}
+                    />
+                  </label>
+                  {formData.image && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-600 truncate max-w-xs">
+                        {formData.image}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleRemoveImage}
+                        className="text-red-600 hover:text-red-700"
+                        title="Remove image"
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+                {formData.image && (
+                  <div className="mt-2">
+                    <img
+                      src={formData.image}
+                      alt="Preview"
+                      className="w-40 h-40 object-cover rounded-lg border"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-4">
+                <button
+                  type="submit"
+                  className="bg-[rgb(65,114,190)] hover:bg-[rgb(52,91,152)] text-white font-semibold px-6 py-2 rounded-lg transition"
+                >
+                  {editingProduct ? "Update Product" : "Create Product"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetForm();
+                    dltImg(formData.image);
+                  }}
+                  className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold px-6 py-2 rounded-lg transition"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         )}
 
-        <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1">
-          <span className="text-white text-sm font-semibold">Premium</span>
-        </div>
-      </div>
-
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xl font-bold text-gray-900">{product.name}</h3>
-          <span
-            className={`text-xs font-semibold px-3 py-1 ${colors.bg} ${colors.text} rounded-full`}
-          >
-            {product.category.charAt(0).toUpperCase() +
-              product.category.slice(1)}
-          </span>
-        </div>
-
-        <p className="text-gray-600 mb-4 leading-relaxed">
-          {product.description}
-        </p>
-
-{/* dont put in products put in detail page */}
-
-        {/* {product.specifications && (
-          <div className="mb-4">
-            <h4 className="font-semibold text-gray-800 mb-2 text-sm">
-              Key Specifications:
-            </h4>
-            <p className="text-sm text-gray-600">{product.specifications}</p>
-          </div>
-        )} */}
-
-        <div className="flex items-center justify-between">
-          <Link
-            href={`/products/${product.id}`}
-            className={`inline-flex items-center space-x-2 ${colors.text} font-semibold hover:opacity-80 transition-all duration-300 group`}
-          >
-            <span>View Details</span>
-            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-          </Link>
-
-          <Link
-            href={`/contact?product=${encodeURIComponent(product.name)}`}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-300 text-sm font-semibold"
-          >
-            Enquire Now
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// Filter Buttons
-const FilterButtons = ({
-  activeFilter,
-  onFilterChange,
-}: {
-  activeFilter: string;
-  onFilterChange: (filter: string) => void;
-}) => {
-  const filters = [
-    { value: "all", label: "All Products" },
-    { value: "rice", label: "Rice Varieties" },
-    { value: "wheat", label: "Wheat Grains" },
-    { value: "spices", label: "Spices" },
-    { value: "pulses", label: "Pulses" },
-  ];
-
-  return (
-    <div className="inline-flex flex-wrap justify-center gap-4 mb-8">
-           {" "}
-      {filters.map((filter) => (
-        <button
-          key={filter.value}
-          onClick={() => onFilterChange(filter.value)}
-          className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-            activeFilter === filter.value
-              ? "bg-blue-600 text-white shadow-lg"
-              : "bg-gray-100 text-gray-700 hover:bg-blue-100 hover:text-blue-600"
-          }`}
-        >
-                    {filter.label}       {" "}
-        </button>
-      ))}
-         {" "}
-    </div>
-  );
-};
-
-// Main Page
-export default function ProductsPage() {
-  const [activeFilter, setActiveFilter] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const scope = useRef(null); // Ref for the main container
-
-  // Fetch products from API
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await fetch("/api/products");
-        
-        if (!response.ok) {
-          throw new Error("Failed to fetch products");
-        }
-        
-        const data = await response.json();
-        setProducts(data);
-      } catch (err) {
-        console.error("Error fetching products:", err);
-        setError(err instanceof Error ? err.message : "Failed to load products");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  useEffect(() => {
-    // GSAP Context for Scoped Animations and Automatic Cleanup
-    const ctx = gsap.context(() => {
-      // Kill existing ScrollTriggers before creating new ones (important for state changes)
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-
-      // Product cards animation on scroll
-      gsap.from(".product-card", {
-        scrollTrigger: {
-          trigger: ".products-grid", // Use the grid container as the trigger
-          start: "top 80%", // Start animation when the grid is 80% from the top
-          toggleActions: "play none none reverse",
-        },
-        duration: 0.8,
-        y: 50,
-        opacity: 0,
-        stagger: 0.15, // Stagger the animation of each card
-        ease: "power3.out",
-      });
-
-      // Why Choose section animation
-      gsap.from(".why-choose-item", {
-        scrollTrigger: {
-          trigger: ".why-choose-grid",
-          start: "top 80%",
-          toggleActions: "play none none reverse",
-        },
-        y: 30,
-        opacity: 0,
-        duration: 0.6,
-        stagger: 0.2,
-      });
-
-      // Crucial for Next.js/React: Recalculate ScrollTrigger positions
-      ScrollTrigger.refresh();
-    }, scope); // <- Scope the animations to the ref
-
-    // Cleanup function for the context, which automatically reverts all GSAP changes
-    return () => ctx.revert();
-  }, [activeFilter, searchTerm, products]); // Re-run effect when filters/search/products change to animate new items
-
-  const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      const matchesFilter =
-        activeFilter === "all" || product.category === activeFilter;
-      const matchesSearch =
-        searchTerm === "" ||
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesFilter && matchesSearch;
-    });
-  }, [activeFilter, searchTerm, products]);
-
-  return (
-    <main ref={scope} className="min-h-screen bg-gray-50">
-      <HeroSection />
-
-      {/* Products Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <FilterButtons
-              activeFilter={activeFilter}
-              onFilterChange={setActiveFilter}
-            />
-
-            <div className="relative max-w-md mx-auto">
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-6 py-4 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
-              />
-              <Search className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-            </div>
-          </div>
-
-          {loading ? (
+        {/* Products List */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            All Products ({products.length})
+          </h2>
+          {products.length === 0 ? (
             <div className="text-center py-12">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading products...</p>
-            </div>
-          ) : error ? (
-            <div className="text-center py-12">
-              <div className="bg-red-50 rounded-2xl p-8 max-w-md mx-auto">
-                <Search className="text-red-400 w-12 h-12 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  Error Loading Products
-                </h3>
-                <p className="text-gray-600 mb-4">{error}</p>
-                <button
-                  onClick={() => window.location.reload()}
-                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-                >
-                  Try Again
-                </button>
-              </div>
-            </div>
-          ) : filteredProducts.length > 0 ? (
-            // Added products-grid class for GSAP targeting
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 products-grid">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
+              <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">
+                No products found. Add your first product!
+              </p>
             </div>
           ) : (
-            <div className="text-center py-12">
-              <div className="bg-gray-50 rounded-2xl p-8 max-w-md mx-auto">
-                <Search className="text-gray-400 w-12 h-12 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  No Products Found
-                </h3>
-                <p className="text-gray-600">
-                  {products.length === 0
-                    ? "No products available at the moment"
-                    : "Try adjusting your search or filter criteria"}
-                </p>
-              </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {products.map((product) => (
+                <div
+                  key={product.id}
+                  className="border rounded-lg p-4 hover:shadow-lg transition flex flex-col"
+                >
+                  {product.image && (
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-48 object-cover rounded-lg mb-4"
+                    />
+                  )}
+                  <div className="mb-2">
+                    <span
+                      className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getCategoryColor(
+                        product.category
+                      )}`}
+                    >
+                      {product.category.charAt(0).toUpperCase() +
+                        product.category.slice(1)}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-800 mb-2 line-clamp-2">
+                    {product.name}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-3">
+                    {product.description}
+                  </p>
+                  <div className="text-xs text-gray-500 mb-4">
+                    <p className="font-semibold mb-1">Specifications:</p>
+                    <p className="line-clamp-2">{product.specifications}</p>
+                  </div>
+                  <div className="mt-auto flex gap-2">
+                    <button
+                      onClick={() => handleEdit(product)}
+                      className="flex-1 bg-[rgb(65,114,190)] hover:bg-[rgb(52,91,152)] text-white font-semibold px-4 py-2 rounded-lg transition flex items-center justify-center gap-2"
+                    >
+                      <Edit size={18} />
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(product.id)}
+                      className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition flex items-center justify-center gap-2"
+                    >
+                      <Trash2 size={18} />
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>
-      </section>
-
-      {/* Why Choose Section */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center space-x-2 bg-purple-100 text-purple-600 rounded-full px-4 py-2 mb-4">
-              <Sprout size={18} />
-              <span className="font-semibold">Why Choose Us</span>
-            </div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Quality You Can Trust
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We ensure every product meets international standards and exceeds
-              customer expectations
-            </p>
-          </div>
-
-          {/* Added why-choose-grid class for GSAP targeting */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 why-choose-grid">
-            <div className="text-center why-choose-item">
-              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Package className="text-blue-600" size={32} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Premium Quality
-              </h3>
-              <p className="text-gray-600">
-                Rigorous quality control at every step
-              </p>
-            </div>
-
-            <div className="text-center why-choose-item">
-              <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Globe className="text-green-600" size={32} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Global Reach
-              </h3>
-              <p className="text-gray-600">
-                Exporting to 50+ countries worldwide
-              </p>
-            </div>
-
-            <div className="text-center why-choose-item">
-              <div className="w-16 h-16 bg-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="text-yellow-600" size={32} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Certified Products
-              </h3>
-              <p className="text-gray-600">
-                International quality certifications
-              </p>
-            </div>
-
-            <div className="text-center why-choose-item">
-              <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Truck className="text-red-600" size={32} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Fast Delivery
-              </h3>
-              <p className="text-gray-600">Timely shipping to your location</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">
-            Can&apos;t Find What You&apos;re Looking For?
-          </h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-            We source a wide variety of agro products. Contact us with your
-            specific requirements, and we&apos;ll help you find the perfect solution.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/contact"
-              className="bg-blue-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl text-lg group"
-            >
-              <span className="flex items-center justify-center space-x-2">
-                <span>Custom Enquiry</span>
-                <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
-              </span>
-            </Link>
-
-            <a
-              href="tel:+1234567890"
-              className="border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-600 hover:text-white transition-all duration-300 text-lg group"
-            >
-              <span className="flex items-center justify-center space-x-2">
-                <span>Call Our Experts</span>
-                <Phone className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" />
-              </span>
-            </a>
-          </div>
-        </div>
-      </section>
-    </main>
+      </div>
+    </div>
   );
 }

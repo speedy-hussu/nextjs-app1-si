@@ -3,8 +3,8 @@ import { generateToken } from "@/app/(backend)/lib/jwt";
 
 // In production, store credentials securely (database, environment variables, etc.)
 const ADMIN_CREDENTIALS = {
-  username: process.env.ADMIN_USERNAME || "admin",
-  password: process.env.ADMIN_PASSWORD || "admin123",
+  username: process.env.ADMIN_USERNAME,
+  password: process.env.ADMIN_PASSWORD,
 };
 
 export async function POST(request: NextRequest) {

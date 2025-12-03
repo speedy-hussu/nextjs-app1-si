@@ -27,8 +27,10 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="fixed w-full z-50 shadow-lg bg-[#0e2c52]/30 
-      bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-5">
+    <nav
+      className="fixed w-full z-50 shadow-lg bg-[#0e2c52]/30 
+      bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-5"
+    >
       <div className="max-w-7xl mx-auto px-6 ">
         <div className="flex justify-between items-center py-2">
           {/* Logo */}
@@ -50,9 +52,7 @@ export default function Navigation() {
                 key={link.href}
                 href={link.href}
                 className={`font-medium text-lg transition-all duration-300 relative group ${
-                  isActive(link.href)
-                    ? "text-white"
-                    : "text-white "
+                  isActive(link.href) ? "text-white" : "text-white "
                 }`}
               >
                 {link.label}
@@ -89,12 +89,9 @@ export default function Navigation() {
 
         {/* Mobile Menu */}
         <div
-  className={`lg:hidden w-full py-4 
+          className={`lg:hidden w-full py-4 
   transition-all duration-300 ${isMobileMenuOpen ? "block" : "hidden"}`}
->
-
-
-
+        >
           <div className="flex flex-col space-y-4">
             {navigationLinks.map((link) => (
               <Link
@@ -113,7 +110,7 @@ export default function Navigation() {
             <Link
               href="/contact"
               onClick={() => setIsMobileMenuOpen(false)}
-              className=" text-[#0e2c52] px-4 py-3 rounded-lg text-center font-semibold transition-all duration-300"
+              className="bg-gradient-to-r from-[rgb(var(--color-primary-700))] to-[rgb(var(--color-primary-900))] text-white px-8 py-4 rounded-xl font-semibold hover:from-[rgb(var(--color-primary-600))] hover:to-[rgb(var(--color-primary-800))] transition-all duration-300 shadow-lg hover:shadow-xl text-lg group flex-1 sm:flex-none text-center"
             >
               Contact Us
             </Link>

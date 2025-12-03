@@ -230,18 +230,7 @@ export default function page() {
   };
 
   const resetForm = async () => {
-    // If canceling with unsaved image, delete it
-    if (!editingPost && formData.image) {
-      await deleteImageFromServer(formData.image);
-    }
-    // If canceling edit and image was changed but not saved, delete the new image
-    else if (
-      editingPost &&
-      formData.image &&
-      formData.image !== previousImage
-    ) {
-      await deleteImageFromServer(formData.image);
-    }
+  
 
     setFormData({
       title: "",
@@ -275,6 +264,9 @@ export default function page() {
     return null;
   }
 
+  const dltImg = async (id:string)=>{
+    await deleteImageFromServer(id);
+  }
   return (
     <div className="min-h-full bg-gray-100 p-8 pt-32">
       <div className="max-w-7xl mx-auto">
@@ -495,7 +487,11 @@ export default function page() {
                 </button>
                 <button
                   type="button"
-                  onClick={resetForm}
+                  onClick={()=>{
+                    resetForm();
+                    dltImg(formData.image)
+
+                  }}
                   className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold px-6 py-2 rounded-lg transition"
                 >
                   Cancel
