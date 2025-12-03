@@ -27,8 +27,9 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="fixed w-full bg-white/95 backdrop-blur-md z-50 shadow-lg border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-6">
+    <nav className="fixed w-full z-50 shadow-lg bg-[#0e2c52]/30 
+      bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-5">
+      <div className="max-w-7xl mx-auto px-6 ">
         <div className="flex justify-between items-center py-2">
           {/* Logo */}
           <div className="flex items-center">
@@ -50,13 +51,13 @@ export default function Navigation() {
                 href={link.href}
                 className={`font-medium text-lg transition-all duration-300 relative group ${
                   isActive(link.href)
-                    ? "text-[#0e2c52]"
-                    : "text-gray-700 hover:text-blue-600"
+                    ? "text-white"
+                    : "text-white "
                 }`}
               >
                 {link.label}
                 <span
-                  className={`absolute -bottom-1 left-0 h-0.5 bg-[#0e2c52] transition-all duration-300 ${
+                  className={`absolute -bottom-1 left-0 h-0.5 bg-white transition-all duration-300 ${
                     isActive(link.href) ? "w-full" : "w-0 group-hover:w-full"
                   }`}
                 />
@@ -64,23 +65,23 @@ export default function Navigation() {
             ))}
             <Link
               href="/contact"
-              className="bg-[#0e2c52] text-white px-6 py-2.5 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold"
+              className="bg-white text-[#0e2c52] px-6 py-2.5 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl font-semibold"
             >
               Contact Us
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="lg:hidden">
+          <div className="lg:hidden ">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-gray-700 hover:text-blue-600 p-2"
+              className=" p-2 hover:bg-white/10"
               aria-label="Toggle mobile menu"
             >
               {isMobileMenuOpen ? (
-                <X className="w-7 h-7" />
+                <X className="w-7 h-7 text-white " />
               ) : (
-                <Menu className="w-7 h-7" />
+                <Menu className="w-7 h-7 text-white" />
               )}
             </button>
           </div>
@@ -88,20 +89,22 @@ export default function Navigation() {
 
         {/* Mobile Menu */}
         <div
-          className={`lg:hidden py-4 border-t border-gray-200 bg-white/95 backdrop-blur-md transition-all duration-300 ${
-            isMobileMenuOpen ? "block" : "hidden"
-          }`}
-        >
+  className={`lg:hidden w-full py-4 
+  transition-all duration-300 ${isMobileMenuOpen ? "block" : "hidden"}`}
+>
+
+
+
           <div className="flex flex-col space-y-4">
             {navigationLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`font-medium py-2 transition-all duration-300 ${
+                className={`font-medium py-2 transition-all p-2 duration-300 rounded-lg ${
                   isActive(link.href)
-                    ? "text-blue-600"
-                    : "text-gray-700 hover:text-blue-600"
+                    ? "text-white"
+                    : "text-white hover:bg-white/10"
                 }`}
               >
                 {link.label}
@@ -110,7 +113,7 @@ export default function Navigation() {
             <Link
               href="/contact"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 text-center font-semibold transition-all duration-300"
+              className=" text-[#0e2c52] px-4 py-3 rounded-lg text-center font-semibold transition-all duration-300"
             >
               Contact Us
             </Link>

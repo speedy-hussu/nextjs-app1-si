@@ -47,12 +47,14 @@ const Footer: React.FC = () => {
 
   return (
     <>
-      <footer className="bg-blue-900 text-white">
+      <footer className="bg-[#0e2c52] text-white">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Company Info */}
             <div>
-              <h3 className="text-xl font-bold mb-4">Shivaay International</h3>
+              <h3 className="text-xl text-white font-bold mb-4">
+                Shivaay International
+              </h3>
               <p className="text-blue-200">
                 Global exporters of premium agro products including rice, wheat,
                 and more.
@@ -61,7 +63,7 @@ const Footer: React.FC = () => {
 
             {/* Quick Links */}
             <div>
-              <h4 className="font-semibold mb-4">Quick Links</h4>
+              <h4 className="font-semibold mb-4 text-white">Quick Links</h4>
               <ul className="space-y-2">
                 <li>
                   <Link
@@ -100,7 +102,7 @@ const Footer: React.FC = () => {
 
             {/* Products */}
             <div>
-              <h4 className="font-semibold mb-4">Products</h4>
+              <h4 className="font-semibold text-white mb-4">Products</h4>
               <ul className="space-y-2">
                 <li>
                   <a
@@ -131,7 +133,7 @@ const Footer: React.FC = () => {
 
             {/* Newsletter Subscription */}
             <div>
-              <h4 className="font-semibold mb-4 flex items-center space-x-2">
+              <h4 className="font-semibold mb-4 text-white flex items-center space-x-2">
                 <Mail size={18} />
                 <span>Newsletter</span>
               </h4>
@@ -149,7 +151,7 @@ const Footer: React.FC = () => {
                 <button
                   onClick={handleNewsletterSubmit}
                   disabled={isLoading}
-                  className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 w-full font-semibold transition-colors disabled:opacity-70"
+                  className="bg-[#173a61] px-4 py-2 rounded hover:bg-[#1a3a66] w-full font-semibold transition-colors disabled:opacity-70"
                 >
                   {isLoading ? "Subscribing..." : "Subscribe"}
                 </button>
@@ -158,8 +160,8 @@ const Footer: React.FC = () => {
           </div>
 
           {/* Divider */}
-          <div className="border-t border-blue-800 mt-8 pt-8 text-center text-blue-200">
-            <p>
+          <div className="border-t border-neutral-100 mt-8 pt-8 text-center text-white">
+            <p className="text-white">
               &copy; {currentYear} Shivaay International. All rights reserved.
             </p>
           </div>

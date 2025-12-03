@@ -1,102 +1,125 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* File: assets/css/style.css */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+
+@layer base {
+  :root {
+    --color-primary-50: 240 244 249;
+    --color-primary-100: 217 227 242;
+    --color-primary-200: 179 199 229;
+    --color-primary-300: 141 170 216;
+    --color-primary-400: 103 142 203;
+    --color-primary-500: 65 114 190;
+    --color-primary-600: 52 91 152;
+    --color-primary-700: 39 68 114;
+    --color-primary-800: 26 45 76;
+    --color-primary-900: 14 44 82;
+    --color-primary-950: 7 26 51;
+  }
+
+  * {
+    @apply border-gray-200;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900 font-sans antialiased overflow-x-hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold text-gray-900 leading-tight tracking-tight;
+  }
+
+  h1 { @apply text-4xl md:text-5xl lg:text-6xl; }
+  h2 { @apply text-3xl md:text-4xl; }
+  h3 { @apply text-2xl md:text-3xl; }
+  h4 { @apply text-xl md:text-2xl; }
+  h5 { @apply text-lg md:text-xl; }
+  h6 { @apply text-base md:text-lg; }
+
+  p {
+    @apply text-gray-600 leading-relaxed;
+  }
+
+  .container {
+    @apply px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply bg-[#0e2c52] text-white hover:bg-[#1a4478] focus:ring-[#0e2c52];
+  }
+
+  .btn-outline {
+    @apply border-2 border-[#0e2c52] text-[#0e2c52] hover:bg-gray-50 focus:ring-[#0e2c52];
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl;
+  }
+
+  .section {
+    @apply py-16 md:py-24 lg:py-32;
+  }
 }
 
-body {
-  font-family: "Inter", sans-serif;
-  overflow-x: hidden;
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#0e2c52] to-[#1a4478];
+  }
+
+  .bg-gradient {
+    @apply bg-gradient-to-br from-[#0e2c52] to-[#1a4478];
+  }
 }
 
-/* .hero-gradient {
-  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
-} */
-
-.floating {
-  animation: floating 3s ease-in-out infinite;
-}
-
+/* Animations */
 @keyframes floating {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
-/* .gradient-text {
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-} */
-
-/* Specific fix for feature and product cards */
-.feature-card,
-.product-card {
-  transform: translateY(0) !important;
-  opacity: 1 !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.feature-card:hover,
-.product-card:hover {
-  transform: translateY(-8px) !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-.parallax-bg {
-  background-attachment: fixed;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+.animate-float {
+  animation: floating 6s ease-in-out infinite;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  @apply w-2;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  @apply bg-gray-100;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3b82f6;
-  border-radius: 4px;
+  @apply bg-[#0e2c52] rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
+  @apply bg-[#1a4478];
 }
 
-/* Blog Animation Fixes */
-.blog-grid-container {
-  /* This will be the trigger for blog posts */
+/* Fix for GSAP animations */
+.gsap-fix {
+  @apply opacity-0;
 }
 
-.sidebar-container {
-  /* This will be the trigger for sidebar */
-}
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
 
-/* Force visibility for blog posts */
-.blog-post {
-  opacity: 1 !important;
-  visibility: visible !important;
-}
+  body {
+    @apply bg-white text-black;
+  }
 
-/* Simple fade-in animation as fallback */
-.fade-in-up {
-  opacity: 0;
-  transform: translateY(60px);
-  transition: all 0.8s ease-out;
+  .print-break {
+    page-break-before: always;
+  }
 }
 
 .fade-in-up.visible {

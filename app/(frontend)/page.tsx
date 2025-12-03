@@ -24,7 +24,7 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const HomePage = () => {
+export default function page() {
   const heroRef = useRef(null);
   const featuresRef = useRef(null);
   const productsRef = useRef(null);
@@ -139,32 +139,33 @@ const HomePage = () => {
       // Products Section - Advanced Animations
       const productCards = document.querySelectorAll(".product-card");
 
-      productCards.forEach((card, index) => {
-        const direction = index % 2 === 0 ? -100 : 100;
-
+      productCards.forEach((card) => {
+        // Smooth reveal animation
         gsap.fromTo(
           card,
           {
-            x: direction,
             opacity: 0,
-            rotationY: 15,
+            y: 40, // small soft slide-up
+            scale: 0.95, // subtle zoom-in
+            filter: "blur(6px)",
           },
           {
             scrollTrigger: {
               trigger: card,
               start: "top 85%",
-              end: "top 40%",
+              end: "top 50%",
               toggleActions: "play none none reverse",
             },
-            x: 0,
             opacity: 1,
-            rotationY: 0,
+            y: 0,
+            scale: 1,
+            filter: "blur(0px)",
             duration: 1.2,
-            ease: "power4.out",
+            ease: "power2.out",
           }
         );
 
-        // Parallax effect for product cards
+        // Softer, smoother parallax on product image
         const productImage = card.querySelector(".product-image");
         if (productImage) {
           gsap.to(productImage, {
@@ -174,7 +175,8 @@ const HomePage = () => {
               end: "bottom top",
               scrub: 1,
             },
-            y: -30,
+            y: -15, // lighter parallax
+            ease: "none",
           });
         }
       });
@@ -299,7 +301,7 @@ const HomePage = () => {
                 </span>
               </div>
 
-              <h1 className="hero-title text-5xl lg:text-6xl font-bold leading-tight mb-6">
+              <h1 className="text-white text-5xl lg:text-6xl font-bold leading-tight mb-6">
                 Premium Agro Products
                 <span className="gradient-text block">Global Excellence</span>
               </h1>
@@ -311,7 +313,7 @@ const HomePage = () => {
               </p>
 
               <div className="hero-buttons flex flex-col sm:flex-row gap-4 mb-8">
-                <button className="bg-white text-[#0e2c52] px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl text-lg text-center group">
+                <button className="bg-white text-primary-700 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl text-lg text-center group">
                   <Link href="/contact">
                     <span className="flex items-center justify-center space-x-2">
                       <span>Get Free Quote</span>
@@ -378,11 +380,11 @@ const HomePage = () => {
         ref={featuresRef}
         className="py-20 bg-white relative overflow-hidden"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-transparent pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-50 to-transparent pointer-events-none"></div>
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-600 rounded-full px-4 py-2 mb-4">
+            <div className="inline-flex items-center space-x-2 bg-primary-100 text-primary-900 rounded-full px-4 py-2 mb-4">
               <Award size={18} />
               <span className="font-semibold">Why Choose Us</span>
             </div>
@@ -396,8 +398,8 @@ const HomePage = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="feature-card bg-gradient-to-br from-white to-blue-50 rounded-2xl p-8 card-hover border border-blue-100">
-              <div className="feature-icon w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <div className="feature-card bg-gradient-to-br from-white to-primary-50 rounded-2xl p-8 card-hover border border-primary-100">
+              <div className="feature-icon w-16 h-16 bg-gradient-to-br from-primary-600 to-primary-800 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                 <Globe className="text-white" size={32} />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -435,8 +437,8 @@ const HomePage = () => {
               </p>
             </div>
 
-            <div className="feature-card bg-gradient-to-br from-white to-purple-50 rounded-2xl p-8 card-hover border border-purple-100">
-              <div className="feature-icon w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+            <div className="feature-card bg-gradient-to-br from-white to-primary-50 rounded-2xl p-8 card-hover border border-primary-100">
+              <div className="feature-icon w-16 h-16 bg-gradient-to-br from-primary-600 to-primary-800 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
                 <Handshake className="text-white" size={32} />
               </div>
               <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -454,7 +456,7 @@ const HomePage = () => {
       {/* Products Showcase */}
       <section
         ref={productsRef}
-        className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 relative overflow-hidden"
+        className="py-20 bg-gradient-to-br from-gray-50 to-[#0e2c52]/5 relative overflow-hidden"
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
@@ -492,13 +494,6 @@ const HomePage = () => {
                   Aromatic long-grain rice known for its distinctive fragrance
                   and exquisite flavor, perfect for international markets.
                 </p>
-                <button className="inline-flex items-center space-x-2 text-amber-600 font-semibold hover:text-amber-700 transition-colors duration-300 group">
-                  <span>Learn More</span>
-                  <ArrowRight
-                    size={18}
-                    className="group-hover:translate-x-1 transition-transform duration-300"
-                  />
-                </button>
               </div>
             </div>
 
@@ -522,13 +517,6 @@ const HomePage = () => {
                   High-protein wheat grains suitable for various culinary
                   applications, sourced from trusted farmers.
                 </p>
-                <button className="inline-flex items-center space-x-2 text-yellow-600 font-semibold hover:text-yellow-700 transition-colors duration-300 group">
-                  <span>Learn More</span>
-                  <ArrowRight
-                    size={18}
-                    className="group-hover:translate-x-1 transition-transform duration-300"
-                  />
-                </button>
               </div>
             </div>
 
@@ -552,13 +540,6 @@ const HomePage = () => {
                   Naturally grown spices with rich aroma and flavor, processed
                   under strict quality control measures.
                 </p>
-                <button className="inline-flex items-center space-x-2 text-emerald-600 font-semibold hover:text-emerald-700 transition-colors duration-300 group">
-                  <span>Learn More</span>
-                  <ArrowRight
-                    size={18}
-                    className="group-hover:translate-x-1 transition-transform duration-300"
-                  />
-                </button>
               </div>
             </div>
           </div>
@@ -577,7 +558,7 @@ const HomePage = () => {
 
       {/* CTA Section */}
       <section ref={ctaRef} className="py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0e2c52] to-[#1a3a66]"></div>
         <div
           className="absolute inset-0 bg-cover bg-center opacity-10"
           style={{
@@ -590,13 +571,13 @@ const HomePage = () => {
           <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
             Ready to Grow Your Business?
           </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-neutral-300 mb-8 max-w-2xl mx-auto leading-relaxed">
             Partner with Shivaay International and experience the difference in
             quality, reliability, and service. Join our global family of
             satisfied distributors today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl text-lg group">
+            <button className="bg-white text-[#0e2c52] px-8 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl text-lg group">
               <span className="flex items-center justify-center space-x-2">
                 <span>Start Partnership</span>
                 <Handshake
@@ -619,6 +600,4 @@ const HomePage = () => {
       </section>
     </div>
   );
-};
-
-export default HomePage;
+}
