@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/app/(backend)/lib/db";
 import { User } from "@/app/(backend)/lib/models/user.model";
 import { verifyAuth, isAdmin } from "@/app/(backend)/lib/auth";
-import { sendBulkEmail } from "@/app/(backend)/lib/email";
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,13 +39,6 @@ export async function POST(request: NextRequest) {
     }
 
     const emails = subscribers.map((s: { email: string }) => s.email);
-
-    await sendBulkEmail({
-      subject,
-      html,
-      text,
-      bcc: emails,
-    });
 
     return NextResponse.json(
       { message: `Newsletter sent to ${emails.length} subscribers.` },
